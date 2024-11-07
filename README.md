@@ -31,13 +31,13 @@
   - Redis
   - ML.NET (Machine Learning)
 - **Frontend**: 
-  - Angular
-  - HTML, CSS, JavaScript
-  - CSS Framework: Bootstrap or Tailwind CSS (to be decided)
+  - Angular 18 with SSR
+  - SASS
+  - CSS Framework: Bootstrap 5 or Tailwind CSS (to be decided)
 - **Database**: 
   - SQL Server (or another compatible database with Entity Framework)
 - **Authentication**: 
-  - JWT (JSON Web Tokens)
+  - JSON Web Tokens
   
 ## Solution Structure
 
