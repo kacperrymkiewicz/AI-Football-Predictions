@@ -10,6 +10,6 @@ export class AuthService {
   private http = inject(HttpClient);
 
   loginUser(userCredentials: UserCredentials) {
-    return this.http.post(environment.apiUrl + 'authentication/login', userCredentials);
+    return this.http.post(`${environment.apiUrl}/authentication/login`, userCredentials);
   }
 }

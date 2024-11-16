@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { BrowserStorageService } from '../../../core/services/browser-storage.service';
 
 @Component({
   selector: 'app-login',
@@ -11,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class LoginComponent {
   private authService: AuthService = inject(AuthService);
+  private browserStorage: BrowserStorageService = inject(BrowserStorageService);
 
   error = signal<string | undefined>(undefined);
 
@@ -24,6 +26,7 @@ export class LoginComponent {
     }).subscribe({
       next: (response) => {
         console.log(response);
+        // this.browserStorage.set('login', response);
       },
       error: (error: Error) => {
         console.log(error.message);
