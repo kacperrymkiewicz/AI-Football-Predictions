@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { BrowserStorageService } from '../../../core/services/browser-storage.service';
+import { UserLoginDto } from '../../../core/api-client/api-client';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ import { BrowserStorageService } from '../../../core/services/browser-storage.se
 })
 export class LoginComponent {
   private authService: AuthService = inject(AuthService);
-  private browserStorage: BrowserStorageService = inject(BrowserStorageService);
+  private storageService: BrowserStorageService = inject(BrowserStorageService);
 
   error = signal<string | undefined>(undefined);
 
@@ -23,10 +24,10 @@ export class LoginComponent {
     this.authService.loginUser({
       emailAddress: this.enteredEmail!,
       password: this.enteredPassword!,
-    }).subscribe({
+    } as UserLoginDto).subscribe({
       next: (response) => {
         console.log(response);
-        // this.browserStorage.set('login', response);
+        this.storageService.set('auth-token', response);
       },
       error: (error: Error) => {
         console.log(error.message);
