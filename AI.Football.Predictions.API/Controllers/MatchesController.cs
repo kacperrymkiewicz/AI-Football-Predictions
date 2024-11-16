@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AI.Football.Predictions.API.Services.FootballDataService;
+using AI.Football.Predictions.Integrations.FootballData.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AI.Football.Predictions.API.Controllers

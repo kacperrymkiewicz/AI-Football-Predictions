@@ -23,4 +23,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AI.Football.Predictions.Integrations\AI.Football.Predictions.Integrations.csproj" />
+  </ItemGroup>
+
 </Project>

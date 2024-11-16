@@ -1,7 +1,6 @@
 using AI.Football.Predictions.API.Data;
-using AI.Football.Predictions.API.Models;
 using AI.Football.Predictions.API.Repositories.Authentication;
-using AI.Football.Predictions.API.Services.FootballDataService;
+using AI.Football.Predictions.Integrations.FootballData.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -26,17 +25,8 @@ builder.Services.AddSwaggerGen(c => {
 
 builder.Services.AddDbContext<DataContext>();
 
-builder.Services.Configure<FootballDataSettings>(
-    builder.Configuration.GetSection("FootballData"));
+builder.Services.AddFootballDataService(builder.Configuration);
 
-builder.Services.AddHttpClient("FootballData", client =>
-{
-    var footballDataSettings = builder.Configuration.GetSection("FootballData").Get<FootballDataSettings>();
-    client.BaseAddress = new Uri(footballDataSettings!.BaseUrl);
-    client.DefaultRequestHeaders.Add("X-Auth-Token", footballDataSettings.ApiKey);
-});
-
-builder.Services.AddScoped<IFootballDataService, FootballDataService>();
 builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => 
