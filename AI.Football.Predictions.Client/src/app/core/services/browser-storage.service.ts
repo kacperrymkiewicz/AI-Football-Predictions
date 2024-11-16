@@ -7,21 +7,23 @@ export const BROWSER_STORAGE = new InjectionToken<Storage>('Browser Storage', {
 
 @Injectable()
 export class BrowserStorageService {
-  constructor(@Inject(BROWSER_STORAGE) public storage: Storage) {}
+  constructor(@Inject(BROWSER_STORAGE) private readonly storage: Storage) {}
 
-  get(key: string) {
-    return this.storage.getItem(key);
+  public get<T>(key: string): T | null {
+    const item = this.storage.getItem(key);
+    return item ? (JSON.parse(item) as T) : null;
   }
 
-  set(key: string, value: string) {
-    this.storage.setItem(key, value);
+  public set<T>(key: string, value: T): void {
+    const jsonValue = JSON.stringify(value);
+    this.storage.setItem(key, jsonValue);
   }
 
-  remove(key: string) {
+  public remove(key: string): void {
     this.storage.removeItem(key);
   }
 
-  clear() {
+  public clear(): void {
     this.storage.clear();
   }
 }
