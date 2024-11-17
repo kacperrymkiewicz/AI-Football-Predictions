@@ -86,7 +86,7 @@ export class Client {
      * @param body (optional) 
      * @return OK
      */
-    login(body: UserLoginDto | undefined): Observable<Int32ServiceResponse> {
+    login(body: UserLoginDto | undefined): Observable<StringServiceResponse> {
         let url_ = this.baseUrl + "/Authentication/Login";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -109,14 +109,14 @@ export class Client {
                 try {
                     return this.processLogin(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<Int32ServiceResponse>;
+                    return _observableThrow(e) as any as Observable<StringServiceResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<Int32ServiceResponse>;
+                return _observableThrow(response_) as any as Observable<StringServiceResponse>;
         }));
     }
 
-    protected processLogin(response: HttpResponseBase): Observable<Int32ServiceResponse> {
+    protected processLogin(response: HttpResponseBase): Observable<StringServiceResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -127,7 +127,7 @@ export class Client {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = Int32ServiceResponse.fromJS(resultData200);
+            result200 = StringServiceResponse.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -135,7 +135,7 @@ export class Client {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<Int32ServiceResponse>(null as any);
+        return _observableOf<StringServiceResponse>(null as any);
     }
 
     /**
@@ -226,6 +226,50 @@ export class Int32ServiceResponse implements IInt32ServiceResponse {
 
 export interface IInt32ServiceResponse {
     data?: number;
+    success?: boolean;
+    message?: string | undefined;
+}
+
+export class StringServiceResponse implements IStringServiceResponse {
+    data?: string | undefined;
+    success?: boolean;
+    message?: string | undefined;
+
+    constructor(data?: IStringServiceResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"];
+            this.success = _data["success"];
+            this.message = _data["message"];
+        }
+    }
+
+    static fromJS(data: any): StringServiceResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new StringServiceResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data;
+        data["success"] = this.success;
+        data["message"] = this.message;
+        return data;
+    }
+}
+
+export interface IStringServiceResponse {
+    data?: string | undefined;
     success?: boolean;
     message?: string | undefined;
 }

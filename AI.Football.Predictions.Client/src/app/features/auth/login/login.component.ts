@@ -3,6 +3,8 @@ import { AuthService } from '../../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { BrowserStorageService } from '../../../core/services/browser-storage.service';
 import { UserLoginDto } from '../../../core/api-client/api-client';
+import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -13,27 +15,40 @@ import { UserLoginDto } from '../../../core/api-client/api-client';
 })
 export class LoginComponent {
   private authService: AuthService = inject(AuthService);
-  private storageService: BrowserStorageService = inject(BrowserStorageService);
+  private router: Router = inject(Router);
 
   error = signal<string | undefined>(undefined);
+  isFetching = signal<boolean>(false);
 
   enteredEmail?: string;
   enteredPassword?: string;
 
   onLoginSubmit() {
+    this.isFetching.set(true);
     this.authService.loginUser({
       emailAddress: this.enteredEmail!,
       password: this.enteredPassword!,
-    } as UserLoginDto).subscribe({
+    } as UserLoginDto)
+    .pipe(
+      finalize(() => {
+        this.isFetching.set(false);
+      })
+    )
+    .subscribe({
       next: (response) => {
         console.log(response);
-        this.storageService.set('auth-token', response);
       },
-      error: (error: Error) => {
-        console.log(error.message);
+      error: (error: any) => {
+        if(error.status == 400) {
+          this.error.set('Nieprawidłowy login lub hasło');
+        }
+        else {
+          this.error.set('Wystąpił nieznany błąd.');
+          console.log(error.message);
+        }
       },
       complete: () => {
-        // this.isFetching.set(false);
+        this.router.navigate(['/']);
       },
     })
   }

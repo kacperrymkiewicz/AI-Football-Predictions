@@ -1,25 +1,32 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { UserCredentials } from '../models/user-credentials.model';
-import { Client, UserLoginDto } from '../api-client/api-client';
+import { Client, StringServiceResponse, UserLoginDto } from '../api-client/api-client';
+import { BrowserStorageService } from './browser-storage.service';
+import { Observable, tap } from 'rxjs';
 
+const USER_KEY = 'auth-user';
 const TOKEN_KEY = 'auth-token';
 const REFRESH_TOKEN_KEY = 'refresh-token';
-const USER_KEY = 'auth-user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private http = inject(HttpClient);
-  private client = new Client(this.http, "http://localhost:5000");
+  private http = new Client(inject(HttpClient), environment.apiUrl);
+  private storageService: BrowserStorageService = inject(BrowserStorageService);
 
-  loginUser(userCredentials: UserLoginDto) {
-    return this.client.login(userCredentials);
+  public loginUser(userCredentials: UserLoginDto): Observable<StringServiceResponse> {
+    return this.http.login(userCredentials).pipe(
+      tap((response) => {
+        if(response.success) {
+          this.storageService.set(TOKEN_KEY, response.data);
+        }
+      })
+    )
   }
 
-  loginUser2(userCredentials: UserCredentials) {
-    return this.http.post(`${environment.apiUrl}/authentication/login`, userCredentials);
-  }
+  // loginUser(userCredentials: UserCredentials) {
+  //   return this.http.post(`${environment.apiUrl}/authentication/login`, userCredentials);
+  // }
 }
