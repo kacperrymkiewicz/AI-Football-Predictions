@@ -14,14 +14,11 @@ namespace AI.Football.Predictions.Integrations.FootballData.Extensions
     {
         public static IServiceCollection AddFootballDataService(this IServiceCollection services, IConfiguration configuration)
         {
-            // Konfiguracja FootballDataSettings
             services.Configure<FootballDataSettings>(configuration.GetSection("FootballData"));
-
-            // Rejestracja HttpClient dla FootballData
             services.AddHttpClient("FootballData", client =>
             {
                 var footballDataSettings = configuration.GetSection("FootballData").Get<FootballDataSettings>();
-                if (footballDataSettings == null)
+                if (footballDataSettings == null || string.IsNullOrEmpty(footballDataSettings.ApiKey))
                 {
                     throw new ArgumentNullException(nameof(footballDataSettings), "FootballData settings not configured properly.");
                 }
@@ -30,11 +27,9 @@ namespace AI.Football.Predictions.Integrations.FootballData.Extensions
                 client.DefaultRequestHeaders.Add("X-Auth-Token", footballDataSettings.ApiKey);
             });
 
-            // Rejestracja serwisu FootballData
             services.AddScoped<IFootballDataService, FootballDataService>();
 
             return services;
         }
     }
-
 }

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AI.Football.Predictions.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationRepository _authRepository;
@@ -43,7 +43,7 @@ namespace AI.Football.Predictions.API.Controllers
 
         [HttpPost]
         [Route("Login")]
-        public async Task<ActionResult<ServiceResponse<int>>> Login(UserLoginDto request)
+        public async Task<ActionResult<ServiceResponse<string>>> Login(UserLoginDto request)
         {
             var response = await _authRepository.Login(request.EmailAddress, request.Password);
 

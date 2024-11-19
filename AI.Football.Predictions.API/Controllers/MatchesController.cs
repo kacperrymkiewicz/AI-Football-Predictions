@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AI.Football.Predictions.Integrations.FootballData.Models;
 using AI.Football.Predictions.Integrations.FootballData.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,8 +19,9 @@ namespace AI.Football.Predictions.API.Controllers
             _footballDataService = footballDataService;
         }
 
-        [HttpGet("Live")]
-        public async Task<IActionResult> GetLiveMatches()
+        [HttpGet("Live", Name = "GetLiveMatches")]
+        [EndpointSummary("Gets the list of live football matches")]
+        public async Task<ActionResult<List<Match>>> GetLiveMatches()
         {
             try
             {

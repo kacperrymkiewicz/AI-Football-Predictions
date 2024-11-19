@@ -66,6 +66,10 @@ button:hover {
   background-color: #db2902;
 }
 
+.btn:active {
+  background-color: #ff4f28;
+}
+
 .form-control:focus {
   box-shadow: 0 0 0 .25rem rgb(255 79 40 / 25%);
 }

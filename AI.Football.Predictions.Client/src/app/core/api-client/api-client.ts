@@ -31,7 +31,7 @@ export class Client {
      * @return OK
      */
     register(body: UserRegisterDto | undefined): Observable<Int32ServiceResponse> {
-        let url_ = this.baseUrl + "/Authentication/Register";
+        let url_ = this.baseUrl + "/api/Authentication/Register";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -68,18 +68,18 @@ export class Client {
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = Int32ServiceResponse.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<Int32ServiceResponse>(null as any);
+        return _observableOf(null as any);
     }
 
     /**
@@ -87,7 +87,7 @@ export class Client {
      * @return OK
      */
     login(body: UserLoginDto | undefined): Observable<StringServiceResponse> {
-        let url_ = this.baseUrl + "/Authentication/Login";
+        let url_ = this.baseUrl + "/api/Authentication/Login";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -124,24 +124,25 @@ export class Client {
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = StringServiceResponse.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<StringServiceResponse>(null as any);
+        return _observableOf(null as any);
     }
 
     /**
+     * Gets the list of live football matches
      * @return OK
      */
-    live(): Observable<void> {
+    getLiveMatches(): Observable<Match[]> {
         let url_ = this.baseUrl + "/api/Matches/Live";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -149,24 +150,25 @@ export class Client {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Accept": "text/plain"
             })
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processLive(response_);
+            return this.processGetLiveMatches(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processLive(response_ as any);
+                    return this.processGetLiveMatches(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
+                    return _observableThrow(e) as any as Observable<Match[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<void>;
+                return _observableThrow(response_) as any as Observable<Match[]>;
         }));
     }
 
-    protected processLive(response: HttpResponseBase): Observable<void> {
+    protected processGetLiveMatches(response: HttpResponseBase): Observable<Match[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -174,16 +176,310 @@ export class Client {
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(null as any);
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(Match.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(null as any);
+        return _observableOf(null as any);
     }
+}
+
+export class Area implements IArea {
+    id?: number;
+    name?: string | undefined;
+    code?: string | undefined;
+    flag?: string | undefined;
+
+    constructor(data?: IArea) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.code = _data["code"];
+            this.flag = _data["flag"];
+        }
+    }
+
+    static fromJS(data: any): Area {
+        data = typeof data === 'object' ? data : {};
+        let result = new Area();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["code"] = this.code;
+        data["flag"] = this.flag;
+        return data;
+    }
+}
+
+export interface IArea {
+    id?: number;
+    name?: string | undefined;
+    code?: string | undefined;
+    flag?: string | undefined;
+}
+
+export class AwayTeam implements IAwayTeam {
+    id?: number;
+    name?: string | undefined;
+    shortName?: string | undefined;
+    tla?: string | undefined;
+    crest?: string | undefined;
+
+    constructor(data?: IAwayTeam) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.shortName = _data["shortName"];
+            this.tla = _data["tla"];
+            this.crest = _data["crest"];
+        }
+    }
+
+    static fromJS(data: any): AwayTeam {
+        data = typeof data === 'object' ? data : {};
+        let result = new AwayTeam();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["shortName"] = this.shortName;
+        data["tla"] = this.tla;
+        data["crest"] = this.crest;
+        return data;
+    }
+}
+
+export interface IAwayTeam {
+    id?: number;
+    name?: string | undefined;
+    shortName?: string | undefined;
+    tla?: string | undefined;
+    crest?: string | undefined;
+}
+
+export class Competition implements ICompetition {
+    id?: number;
+    name?: string | undefined;
+    code?: string | undefined;
+    type?: string | undefined;
+    emblem?: string | undefined;
+
+    constructor(data?: ICompetition) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.code = _data["code"];
+            this.type = _data["type"];
+            this.emblem = _data["emblem"];
+        }
+    }
+
+    static fromJS(data: any): Competition {
+        data = typeof data === 'object' ? data : {};
+        let result = new Competition();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["code"] = this.code;
+        data["type"] = this.type;
+        data["emblem"] = this.emblem;
+        return data;
+    }
+}
+
+export interface ICompetition {
+    id?: number;
+    name?: string | undefined;
+    code?: string | undefined;
+    type?: string | undefined;
+    emblem?: string | undefined;
+}
+
+export class FullTime implements IFullTime {
+    home?: number | undefined;
+    away?: number | undefined;
+
+    constructor(data?: IFullTime) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.home = _data["home"];
+            this.away = _data["away"];
+        }
+    }
+
+    static fromJS(data: any): FullTime {
+        data = typeof data === 'object' ? data : {};
+        let result = new FullTime();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["home"] = this.home;
+        data["away"] = this.away;
+        return data;
+    }
+}
+
+export interface IFullTime {
+    home?: number | undefined;
+    away?: number | undefined;
+}
+
+export class HalfTime implements IHalfTime {
+    home?: number | undefined;
+    away?: number | undefined;
+
+    constructor(data?: IHalfTime) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.home = _data["home"];
+            this.away = _data["away"];
+        }
+    }
+
+    static fromJS(data: any): HalfTime {
+        data = typeof data === 'object' ? data : {};
+        let result = new HalfTime();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["home"] = this.home;
+        data["away"] = this.away;
+        return data;
+    }
+}
+
+export interface IHalfTime {
+    home?: number | undefined;
+    away?: number | undefined;
+}
+
+export class HomeTeam implements IHomeTeam {
+    id?: number;
+    name?: string | undefined;
+    shortName?: string | undefined;
+    tla?: string | undefined;
+    crest?: string | undefined;
+
+    constructor(data?: IHomeTeam) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.shortName = _data["shortName"];
+            this.tla = _data["tla"];
+            this.crest = _data["crest"];
+        }
+    }
+
+    static fromJS(data: any): HomeTeam {
+        data = typeof data === 'object' ? data : {};
+        let result = new HomeTeam();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["shortName"] = this.shortName;
+        data["tla"] = this.tla;
+        data["crest"] = this.crest;
+        return data;
+    }
+}
+
+export interface IHomeTeam {
+    id?: number;
+    name?: string | undefined;
+    shortName?: string | undefined;
+    tla?: string | undefined;
+    crest?: string | undefined;
 }
 
 export class Int32ServiceResponse implements IInt32ServiceResponse {
@@ -228,6 +524,182 @@ export interface IInt32ServiceResponse {
     data?: number;
     success?: boolean;
     message?: string | undefined;
+}
+
+export class Match implements IMatch {
+    id?: number;
+    status?: string | undefined;
+    utcDate?: Date;
+    homeTeam?: HomeTeam;
+    awayTeam?: AwayTeam;
+    score?: Score;
+    area?: Area;
+    competition?: Competition;
+    season?: Season;
+    matchday?: number;
+    stage?: string | undefined;
+    lastUpdated?: Date;
+
+    constructor(data?: IMatch) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.status = _data["status"];
+            this.utcDate = _data["utcDate"] ? new Date(_data["utcDate"].toString()) : <any>undefined;
+            this.homeTeam = _data["homeTeam"] ? HomeTeam.fromJS(_data["homeTeam"]) : <any>undefined;
+            this.awayTeam = _data["awayTeam"] ? AwayTeam.fromJS(_data["awayTeam"]) : <any>undefined;
+            this.score = _data["score"] ? Score.fromJS(_data["score"]) : <any>undefined;
+            this.area = _data["area"] ? Area.fromJS(_data["area"]) : <any>undefined;
+            this.competition = _data["competition"] ? Competition.fromJS(_data["competition"]) : <any>undefined;
+            this.season = _data["season"] ? Season.fromJS(_data["season"]) : <any>undefined;
+            this.matchday = _data["matchday"];
+            this.stage = _data["stage"];
+            this.lastUpdated = _data["lastUpdated"] ? new Date(_data["lastUpdated"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): Match {
+        data = typeof data === 'object' ? data : {};
+        let result = new Match();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["status"] = this.status;
+        data["utcDate"] = this.utcDate ? this.utcDate.toISOString() : <any>undefined;
+        data["homeTeam"] = this.homeTeam ? this.homeTeam.toJSON() : <any>undefined;
+        data["awayTeam"] = this.awayTeam ? this.awayTeam.toJSON() : <any>undefined;
+        data["score"] = this.score ? this.score.toJSON() : <any>undefined;
+        data["area"] = this.area ? this.area.toJSON() : <any>undefined;
+        data["competition"] = this.competition ? this.competition.toJSON() : <any>undefined;
+        data["season"] = this.season ? this.season.toJSON() : <any>undefined;
+        data["matchday"] = this.matchday;
+        data["stage"] = this.stage;
+        data["lastUpdated"] = this.lastUpdated ? this.lastUpdated.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IMatch {
+    id?: number;
+    status?: string | undefined;
+    utcDate?: Date;
+    homeTeam?: HomeTeam;
+    awayTeam?: AwayTeam;
+    score?: Score;
+    area?: Area;
+    competition?: Competition;
+    season?: Season;
+    matchday?: number;
+    stage?: string | undefined;
+    lastUpdated?: Date;
+}
+
+export class Score implements IScore {
+    winner?: string | undefined;
+    duration?: string | undefined;
+    fullTime?: FullTime;
+    halfTime?: HalfTime;
+
+    constructor(data?: IScore) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.winner = _data["winner"];
+            this.duration = _data["duration"];
+            this.fullTime = _data["fullTime"] ? FullTime.fromJS(_data["fullTime"]) : <any>undefined;
+            this.halfTime = _data["halfTime"] ? HalfTime.fromJS(_data["halfTime"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): Score {
+        data = typeof data === 'object' ? data : {};
+        let result = new Score();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["winner"] = this.winner;
+        data["duration"] = this.duration;
+        data["fullTime"] = this.fullTime ? this.fullTime.toJSON() : <any>undefined;
+        data["halfTime"] = this.halfTime ? this.halfTime.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IScore {
+    winner?: string | undefined;
+    duration?: string | undefined;
+    fullTime?: FullTime;
+    halfTime?: HalfTime;
+}
+
+export class Season implements ISeason {
+    id?: number;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+    currentMatchday?: number;
+
+    constructor(data?: ISeason) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.startDate = _data["startDate"];
+            this.endDate = _data["endDate"];
+            this.currentMatchday = _data["currentMatchday"];
+        }
+    }
+
+    static fromJS(data: any): Season {
+        data = typeof data === 'object' ? data : {};
+        let result = new Season();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["startDate"] = this.startDate;
+        data["endDate"] = this.endDate;
+        data["currentMatchday"] = this.currentMatchday;
+        return data;
+    }
+}
+
+export interface ISeason {
+    id?: number;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+    currentMatchday?: number;
 }
 
 export class StringServiceResponse implements IStringServiceResponse {
