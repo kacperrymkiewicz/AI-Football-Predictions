@@ -39,7 +39,7 @@ export class Client {
         let options_ : any = {
             body: content_,
             observe: "response",
-            responseType: "blob",
+            responseType: "json",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
                 "Accept": "text/plain"
@@ -95,7 +95,7 @@ export class Client {
         let options_ : any = {
             body: content_,
             observe: "response",
-            responseType: "blob",
+            responseType: "json",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
                 "Accept": "text/plain"
@@ -148,7 +148,7 @@ export class Client {
 
         let options_ : any = {
             observe: "response",
-            responseType: "blob",
+            responseType: "json",
             headers: new HttpHeaders({
                 "Accept": "text/plain"
             })
@@ -867,16 +867,7 @@ function throwException(message: string, status: number, response: string, heade
 
 function blobToText(blob: any): Observable<string> {
     return new Observable<string>((observer: any) => {
-        if (!blob) {
-            observer.next("");
-            observer.complete();
-        } else {
-            let reader = new FileReader();
-            reader.onload = event => {
-                observer.next((event.target as any).result);
-                observer.complete();
-            };
-            reader.readAsText(blob);
-        }
+        observer.next(JSON.stringify(blob));
+        observer.complete();
     });
 }
