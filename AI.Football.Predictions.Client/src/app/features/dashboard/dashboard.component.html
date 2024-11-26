@@ -1,5 +1,5 @@
 <p>dashboard works!</p>
-@if (matchService.isFetching()) {
+@if (loadingStateService.isLoading('liveMatches')) {
   <p>Trwa wczytywanie listy meczy...</p>
 } @else {
   @for (match of matchService.liveMatches(); track $index) {

@@ -3,18 +3,19 @@ import { Client, Match } from '../api-client/api-client';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { LoadingStateService } from './loading-state.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MatchService {
   private http = new Client(inject(HttpClient), environment.apiUrl);
+  private loadingStateService: LoadingStateService = inject(LoadingStateService);
 
   liveMatches = signal<Match[]>([]);
-  isFetching = signal<boolean>(true);
 
   public getLiveMatches(): Observable<Match[]> {
-    this.isFetching.set(true);
+    this.loadingStateService.setLoadingState('liveMatches', true);
     return this.http.getLiveMatches().pipe(
       tap({
         next: (matches) => {
@@ -24,7 +25,7 @@ export class MatchService {
           console.error('Błąd pobierania meczów:', err);
         },
         complete: () => {
-          this.isFetching.set(false);
+          this.loadingStateService.setLoadingState('liveMatches', false);
         }
       })
     )
