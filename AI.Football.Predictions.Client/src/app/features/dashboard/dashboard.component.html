@@ -2,7 +2,11 @@
 @if (loadingStateService.isLoading('liveMatches')) {
   <p>Trwa wczytywanie listy meczy...</p>
 } @else {
-  @for (match of matchService.liveMatches(); track $index) {
-    <p>{{ match.homeTeam?.name }} vs {{ match.awayTeam?.name }}</p>
+  @if(loadingStateService.hasError('liveMatches')) {
+    <p>blad</p>
+  } @else {
+    @for (match of matchService.liveMatches(); track $index) {
+      <p>{{ match.homeTeam?.name }} vs {{ match.awayTeam?.name }}</p>
+    }
   }
 }

@@ -15,17 +15,18 @@ export class MatchService {
   liveMatches = signal<Match[]>([]);
 
   public getLiveMatches(): Observable<Match[]> {
-    this.loadingStateService.setLoadingState('liveMatches', true);
+    this.loadingStateService.setState('liveMatches', true, false);
     return this.http.getLiveMatches().pipe(
       tap({
         next: (matches) => {
           this.liveMatches.set(matches);
         },
         error: (err) => {
+          this.loadingStateService.setState('liveMatches', false, true);
           console.error('Błąd pobierania meczów:', err);
         },
         complete: () => {
-          this.loadingStateService.setLoadingState('liveMatches', false);
+          this.loadingStateService.setState('liveMatches', false);
         }
       })
     )
