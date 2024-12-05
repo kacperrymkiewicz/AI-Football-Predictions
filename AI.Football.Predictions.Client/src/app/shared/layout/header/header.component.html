@@ -1,1 +1,95 @@
-<p>header works!</p>
+<header class="sticky-top">
+  <nav class="navbar navbar-expand-md">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <div class="header__logo" routerLink="/">
+          <h3 class="m-0" style="color: #ddd">Football AI Predictions</h3>
+          <!-- <img src="assets/images/logo.png" alt="Logo"> -->
+        </div>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <button class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Strona główna</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" routerLink="/auth/login" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Logowanie</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" routerLink="/auth/register" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Rejestracja</button>
+          </li>
+        </ul>
+        <!-- @if (user) {
+          @if (isDropdownMenuOpen()) {
+            <div (click)="toggleDropdownMenu()" class="profile-overlay"></div>
+          }
+          <div (click)="toggleDropdownMenu()" class="profile d-none d-md-flex align-items-center">
+            <svg class="profile-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="40" height="40" rx="20" fill="#ff4f28"/>
+              <path d="M20 21.3334C21.8409 21.3334 23.3333 19.841 23.3333 18C23.3333 16.1591 21.8409 14.6667 20 14.6667C18.159 14.6667 16.6666 16.1591 16.6666 18C16.6666 19.841 18.159 21.3334 20 21.3334ZM20 21.3334C17.0544 21.3334 14.6666 23.1242 14.6666 25.3334M20 21.3334C22.9455 21.3334 25.3333 23.1242 25.3333 25.3334" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="profile-user-info">
+              <p> {{ user.firstName }} {{ user.lastName }}</p>
+              @if (role == 'ADMIN') {
+                <p>Administrator</p>
+              } @else {
+                <p>Klient</p>
+              }
+            </div>
+            <svg class="profile-arrow" [class.open]="isDropdownMenuOpen()" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 1.33331L6.58926 5.74406C6.26382 6.0695 5.73618 6.0695 5.41074 5.74406L1 1.33331" stroke="#5F6D7E" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            @if (isDropdownMenuOpen()) {
+              <div class="dropdown-menu">
+                <ul>
+                  <li routerLink="/account">
+                    <i class="bi bi-person-fill"></i>
+                    <span>Mój profil</span>
+                  </li>
+                  <li routerLink="/account/reservations">
+                    <i class="bi bi-calendar-fill"></i>
+                    <span>Moje rezerwacje</span>
+                  </li>
+                  @if (role == 'ADMIN') {
+                    <li routerLink="/account/admin">
+                      <i class="bi bi-ui-checks"></i>
+                      <span>Panel admina</span>
+                    </li>
+                  }
+                  <li (click)="onLogout()">
+                    <i class="bi bi-door-closed-fill"></i>
+                    <span>Wyloguj się</span>
+                  </li>
+                </ul>
+              </div>
+            }
+          </div>
+
+          <ul class="navbar-nav me-auto d-md-none">
+            <li class="nav-item">
+              <button class="nav-link" routerLink="/account" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Mój profil</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" routerLink="/account/reservations" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Moje rezerwacje</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" (click)="onLogout()">Wyloguj się</button>
+            </li>
+          </ul>
+        } @else {
+          <div class="accout-buttons">
+            <div class="header__login">
+              <button class="header__login-button" routerLink="/register">Załóż konto</button>
+            </div>
+            <div class="header__login">
+              <button class="header__login-button" routerLink="/login">Logowanie</button>
+            </div>
+          </div>
+        } -->
+      </div>
+    </div>
+  </nav>
+</header>

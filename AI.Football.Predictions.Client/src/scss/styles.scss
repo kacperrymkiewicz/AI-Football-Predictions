@@ -1,0 +1,16 @@
+@import 'variables';
+
+.toast-container .ngx-toastr {
+  box-shadow: 0 0 12px rgb(10 10 10 / 50%);
+  margin: 0 0 12px;
+}
+
+.toast-top-right {
+  top: 85px;
+  right: 20px;
+}
+
+body {
+  background-color: $background-color;
+  color: #ddd;
+}
