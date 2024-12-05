@@ -5,6 +5,7 @@ import { BrowserStorageService } from '../../../core/services/browser-storage.se
 import { UserLoginDto } from '../../../core/api-client/api-client';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +16,7 @@ import { finalize } from 'rxjs';
 })
 export class LoginComponent {
   private authService: AuthService = inject(AuthService);
+  private toastr: ToastrService = inject(ToastrService);
   private router: Router = inject(Router);
 
   error = signal<string | undefined>(undefined);
@@ -48,6 +50,7 @@ export class LoginComponent {
         }
       },
       complete: () => {
+        this.toastr.success('Zalogowano pomyślnie!');
         this.router.navigate(['/']);
       },
     })

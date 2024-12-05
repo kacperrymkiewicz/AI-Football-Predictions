@@ -1,10 +1,11 @@
+@import 'variables';
+
 .login-container {
   margin-top: 100px;
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 0 15px 7px rgba(0, 0, 0, 0.35);
-  color: white;
-  background-color: #333;
+  background-color: $primary-dark-color;
 }
 
 a {
@@ -17,6 +18,7 @@ a:hover{
 h2 {
   text-align: center;
   margin-bottom: 20px;
+  color: $primary-color;
 }
 h3 {
   text-align: center;
@@ -45,16 +47,16 @@ input[type="password"] {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
-  border: 1px solid #ff4f28;
+  border: 1px solid $primary-color;
   border-radius: 4px;
   color: white;
-  background-color: #262424;
+  background-color: $secondary-dark-color;
 }
 
 button {
   width: 100%;
   padding: 10px;
-  background-color: #ff4f28;
+  background-color: $primary-color;
   border: none;
   border-radius: 4px;
   color: #fff;
@@ -63,15 +65,15 @@ button {
 }
 
 button:hover {
-  background-color: #db2902;
+  background-color: $primary-color-hover;
 }
 
 .btn:active, .btn:disabled {
-  background-color: #ff4f28;
+  background-color: $primary-color;
 }
 
 .form-control:focus {
-  box-shadow: 0 0 0 .25rem rgb(255 79 40 / 25%);
+  box-shadow: 0 0 0 0.25rem rgba(8, 213, 101, 0.25);
 }
 
 input:-webkit-autofill,
