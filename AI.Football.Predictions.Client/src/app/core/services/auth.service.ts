@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { afterNextRender, inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Client, StringServiceResponse, UserLoginDto } from '../api-client/api-client';
 import { BrowserStorageService } from './browser-storage.service';
@@ -20,6 +20,12 @@ export class AuthService {
 
   userData = signal<User | null>(null);
 
+  constructor() {
+    afterNextRender(() => {
+      this.setUserData(this.getUserIdentity());
+    })
+  }
+
   public loginUser(userCredentials: UserLoginDto): Observable<StringServiceResponse> {
     return this.http.login(userCredentials).pipe(
       tap((response) => {
@@ -32,7 +38,8 @@ export class AuthService {
   }
 
   public getUserData(): User | null {
-    return this.storageService.get(USER_KEY) || null;
+    // return this.storageService.get(USER_KEY) || null;
+    return this.userData();
   }
 
   public setUserData(user: User): void {

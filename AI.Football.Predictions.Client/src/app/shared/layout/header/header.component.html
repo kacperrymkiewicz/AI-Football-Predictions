@@ -22,13 +22,13 @@
             <button class="nav-link" routerLink="/auth/register" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Rejestracja</button>
           </li>
         </ul>
-        <!-- @if (user) {
+        @if (user) {
           @if (isDropdownMenuOpen()) {
             <div (click)="toggleDropdownMenu()" class="profile-overlay"></div>
           }
           <div (click)="toggleDropdownMenu()" class="profile d-none d-md-flex align-items-center">
             <svg class="profile-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="40" height="40" rx="20" fill="#ff4f28"/>
+              <rect width="40" height="40" rx="20" fill="#08d565"/>
               <path d="M20 21.3334C21.8409 21.3334 23.3333 19.841 23.3333 18C23.3333 16.1591 21.8409 14.6667 20 14.6667C18.159 14.6667 16.6666 16.1591 16.6666 18C16.6666 19.841 18.159 21.3334 20 21.3334ZM20 21.3334C17.0544 21.3334 14.6666 23.1242 14.6666 25.3334M20 21.3334C22.9455 21.3334 25.3333 23.1242 25.3333 25.3334" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
             <div class="profile-user-info">
@@ -36,7 +36,7 @@
               @if (role == 'ADMIN') {
                 <p>Administrator</p>
               } @else {
-                <p>Klient</p>
+                <p>Użytkownik</p>
               }
             </div>
             <svg class="profile-arrow" [class.open]="isDropdownMenuOpen()" width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -49,9 +49,9 @@
                     <i class="bi bi-person-fill"></i>
                     <span>Mój profil</span>
                   </li>
-                  <li routerLink="/account/reservations">
-                    <i class="bi bi-calendar-fill"></i>
-                    <span>Moje rezerwacje</span>
+                  <li routerLink="/account/followed-teams">
+                    <i class="bi bi-star-fill"></i>
+                    <span>Obserwowane drużyny</span>
                   </li>
                   @if (role == 'ADMIN') {
                     <li routerLink="/account/admin">
@@ -73,7 +73,7 @@
               <button class="nav-link" routerLink="/account" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Mój profil</button>
             </li>
             <li class="nav-item">
-              <button class="nav-link" routerLink="/account/reservations" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Moje rezerwacje</button>
+              <button class="nav-link" routerLink="/account/followed-teams" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Obserwowane drużyny</button>
             </li>
             <li class="nav-item">
               <button class="nav-link" (click)="onLogout()">Wyloguj się</button>
@@ -88,7 +88,7 @@
               <button class="header__login-button" routerLink="/login">Logowanie</button>
             </div>
           </div>
-        } -->
+        }
       </div>
     </div>
   </nav>

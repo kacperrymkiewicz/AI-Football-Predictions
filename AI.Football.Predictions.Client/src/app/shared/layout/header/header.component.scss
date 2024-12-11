@@ -75,18 +75,18 @@ header {
 }
 
 .profile .dropdown-menu {
-  background-color: #333333;
-  border-bottom: 3px solid #ff4f28;
+  background-color: $primary-dark-color;
+  border-bottom: 3px solid $primary-color;
   color: white;
   display: flex;
-  border-left: 2px solid #ff4f28;
-  border-right: 2px solid #ff4f28;
+  border-left: 2px solid $primary-color;
+  border-right: 2px solid $primary-color;
   width: 280px;
   position: absolute;
   border-radius: 0px 0px 12px 12px;
   border-top: none;
   z-index: 2;
-  top: 59px;
+  top: 52px;
   right: -15px;
   box-shadow: 0px 15px 15px 0px rgba(0, 0, 0, 0.4);
   cursor: default;
@@ -103,18 +103,18 @@ header {
   padding: 5px 0;
   border-radius: 10px;
   margin: 7px 0;
-  background: #2b2b2c;
+  background: #2f324e;
   text-align: center;
   cursor: pointer;
 }
 
 .profile .dropdown-menu li i {
   margin-right: 3px;
-  color: #ff4f28;
+  color: $primary-color;
 }
 
 .profile .dropdown-menu li:hover {
-  background-color: #151516;
+  background-color: #1d1e2a;
 }
 
 .profile .profile-arrow.open {
