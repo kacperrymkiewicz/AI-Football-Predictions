@@ -1,0 +1,26 @@
+@import 'variables';
+
+.match-item {
+  margin: 20px 0;
+  background-color: $primary-dark-color;
+  padding: 15px 30px;
+
+  .away-team {
+    text-align: right;
+  }
+
+  .team {
+    img {
+      height: 64px;
+    }
+  }
+
+  .match-separator {
+    height: 100%;
+    font-weight: 600;
+    font-size: 2rem;
+    color: $primary-color;
+    margin: 0 12px;
+    text-align: center;
+  }
+}

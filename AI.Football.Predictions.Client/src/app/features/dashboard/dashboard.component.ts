@@ -2,11 +2,12 @@ import { Component, inject, signal } from '@angular/core';
 import { MatchService } from '../../core/services/match.service';
 import { LoadingState } from '../../core/models/loading-state';
 import { LoadingStateService } from '../../core/services/loading-state.service';
+import { MatchItemComponent } from "./match-item/match-item.component";
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [],
+  imports: [MatchItemComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })

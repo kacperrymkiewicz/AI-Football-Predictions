@@ -1,0 +1,13 @@
+<div class="match-item">
+  <div class="row">
+    <div class="col-md-5">
+      <div class="home-team team"><img [src]="match.homeTeam?.crest" [alt]="match.homeTeam?.name"> {{ match.homeTeam?.name }}</div>
+    </div>
+    <div class="col-md-2">
+      <div class="match-separator">vs</div>
+    </div>
+    <div class="col-md-5">
+      <div class="away-team team"><img [src]="match.awayTeam?.crest" [alt]="match.awayTeam?.name"> {{ match.awayTeam?.name }}</div>
+    </div>
+  </div>
+</div>

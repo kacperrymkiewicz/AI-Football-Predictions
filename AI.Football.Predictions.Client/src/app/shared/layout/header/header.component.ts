@@ -28,7 +28,7 @@ export class HeaderComponent {
   onLogout() {
     this.authService.clearUserData();
     this.user = null;
-    this.router.navigate(['/login'])
+    this.router.navigate(['/auth/login'])
     this.toastr.success('Wylogowano pomyślnie!');
   }
 

@@ -1,12 +1,24 @@
-<p>dashboard works!</p>
-@if (loadingStateService.isLoading('liveMatches')) {
-  <p>Trwa wczytywanie listy meczy...</p>
-} @else {
-  @if(loadingStateService.hasError('liveMatches')) {
-    <p>blad</p>
-  } @else {
-    @for (match of matchService.liveMatches(); track $index) {
-      <p>{{ match.homeTeam?.name }} vs {{ match.awayTeam?.name }}</p>
-    }
-  }
-}
+<section id="dashboard">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        @if (loadingStateService.isLoading('liveMatches')) {
+          <div class="loading-spinner">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <h3>Trwa wczytywanie listy meczów...</h3>
+          </div>
+        } @else {
+          @if(loadingStateService.hasError('liveMatches')) {
+            <p>blad</p>
+          } @else {
+            @for (match of matchService.liveMatches(); track $index) {
+              <app-match-item [match]="match"></app-match-item>
+            }
+          }
+        }
+      </div>
+    </div>
+  </div>
+</section>

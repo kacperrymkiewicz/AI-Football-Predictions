@@ -15,12 +15,14 @@
           <li class="nav-item">
             <button class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Strona główna</button>
           </li>
-          <li class="nav-item">
-            <button class="nav-link" routerLink="/auth/login" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Logowanie</button>
-          </li>
-          <li class="nav-item">
-            <button class="nav-link" routerLink="/auth/register" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Rejestracja</button>
-          </li>
+          @if (!user) {
+            <li class="nav-item">
+              <button class="nav-link" routerLink="/auth/login" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Logowanie</button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" routerLink="/auth/register" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Rejestracja</button>
+            </li>
+          }
         </ul>
         @if (user) {
           @if (isDropdownMenuOpen()) {
@@ -80,14 +82,14 @@
             </li>
           </ul>
         } @else {
-          <div class="accout-buttons">
+          <!-- <div class="accout-buttons">
             <div class="header__login">
               <button class="header__login-button" routerLink="/register">Załóż konto</button>
             </div>
             <div class="header__login">
               <button class="header__login-button" routerLink="/login">Logowanie</button>
             </div>
-          </div>
+          </div> -->
         }
       </div>
     </div>
