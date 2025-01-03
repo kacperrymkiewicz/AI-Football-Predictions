@@ -1,6 +1,7 @@
 using AI.Football.Predictions.API.Data;
 using AI.Football.Predictions.API.Repositories.Authentication;
 using AI.Football.Predictions.Integrations.FootballData.Extensions;
+using AI.Football.Predictions.Integrations.Sportradar.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -26,6 +27,7 @@ builder.Services.AddSwaggerGen(c => {
 builder.Services.AddDbContext<DataContext>();
 
 builder.Services.AddFootballDataService(builder.Configuration);
+builder.Services.AddSportradarService(builder.Configuration);
 
 builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
