@@ -23,6 +23,8 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Models
         public int CompetitorNum { get; set; }
         public bool HideOnSearch { get; set; }
         public bool HideOnCatalog { get; set; }
+        public string ShortName { get; set; }
+        public string LongName { get; set; }
     }
 
 }

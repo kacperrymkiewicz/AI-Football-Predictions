@@ -20,10 +20,10 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
         {
             var client = _httpClientFactory.CreateClient("Sportradar");
 
-            var dateFrom = DateTime.UtcNow.ToString("yyyy-MM-dd");
-            var dateTo = DateTime.UtcNow.AddDays(10).ToString("yyyy-MM-dd");
+            var dateFrom = DateTime.UtcNow.ToString("dd'/'MM'/'yyyy");
+            var dateTo = DateTime.UtcNow.AddDays(3).ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
 
-            var response = await client.GetAsync($"/web/game/stats/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&userCountryId=37&games=3877903&lastUpdateId=4996686957");
+            var response = await client.GetAsync($"web/games/myscores/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&competitions=572,11,25,7,156,153,8268,573,332&startDate={dateFrom}&endDate={dateTo}&showOdds=true&topBookmaker=151");
 
             if (!response.IsSuccessStatusCode)
                 throw new Exception("Error fetching live matches");

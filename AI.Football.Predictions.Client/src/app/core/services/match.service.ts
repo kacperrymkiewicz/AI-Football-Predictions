@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Client, Match } from '../api-client/api-client';
+import { Client, SportradarResponse } from '../api-client/api-client';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
@@ -12,9 +12,9 @@ export class MatchService {
   private http = new Client(inject(HttpClient), environment.apiUrl);
   private loadingStateService: LoadingStateService = inject(LoadingStateService);
 
-  liveMatches = signal<Match[]>([]);
+  liveMatches = signal<SportradarResponse | null>(null);
 
-  public getLiveMatches(): Observable<Match[]> {
+  public getLiveMatches(): Observable<SportradarResponse> {
     this.loadingStateService.setState('liveMatches', true, false);
     return this.http.getLiveMatches().pipe(
       tap({

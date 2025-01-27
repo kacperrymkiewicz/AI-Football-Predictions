@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace AI.Football.Predictions.Integrations.Sportradar.Models
 {
-    public class Venue
+    public class Rate
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string ShortName { get; set; }
+        public double Decimal { get; set; }
+        public string Fractional { get; set; }
+        public string American { get; set; }
     }
 
 }

@@ -27,9 +27,9 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Models
         public bool HasMissingPlayers { get; set; }
         public bool HasFieldPositions { get; set; }
         public bool HasTVNetworks { get; set; }
+        public Odds Odds { get; set; }
         public HomeCompetitor HomeCompetitor { get; set; }
         public AwayCompetitor AwayCompetitor { get; set; }
-        public Venue Venue { get; set; }
         public bool IsHomeAwayInverted { get; set; }
         public bool HasStats { get; set; }
         public bool HasStandings { get; set; }
@@ -37,8 +37,12 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Models
         public bool HasBrackets { get; set; }
         public bool HasPreviousMeetings { get; set; }
         public bool HasRecentMatches { get; set; }
+        public bool HasBets { get; set; }
+        public bool HasPlayerBets { get; set; }
         public int Winner { get; set; }
         public int HomeAwayTeamOrder { get; set; }
+        public bool HasNews { get; set; }
+        public bool? ShowCountdown { get; set; }
     }
 
 }

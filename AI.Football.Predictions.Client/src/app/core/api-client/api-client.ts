@@ -142,7 +142,7 @@ export class Client {
      * Gets the list of live football matches
      * @return OK
      */
-    getLiveMatches(): Observable<Match[]> {
+    getLiveMatches(): Observable<SportradarResponse> {
         let url_ = this.baseUrl + "/api/Matches/Live";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -161,14 +161,14 @@ export class Client {
                 try {
                     return this.processGetLiveMatches(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<Match[]>;
+                    return _observableThrow(e) as any as Observable<SportradarResponse>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<Match[]>;
+                return _observableThrow(response_) as any as Observable<SportradarResponse>;
         }));
     }
 
-    protected processGetLiveMatches(response: HttpResponseBase): Observable<Match[]> {
+    protected processGetLiveMatches(response: HttpResponseBase): Observable<SportradarResponse> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -179,14 +179,7 @@ export class Client {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(Match.fromJS(item));
-            }
-            else {
-                result200 = <any>null;
-            }
+            result200 = SportradarResponse.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -198,13 +191,11 @@ export class Client {
     }
 }
 
-export class Area implements IArea {
-    id?: number;
-    name?: string | undefined;
-    code?: string | undefined;
-    flag?: string | undefined;
+export class ActionButton implements IActionButton {
+    link?: string | undefined;
+    label?: string | undefined;
 
-    constructor(data?: IArea) {
+    constructor(data?: IActionButton) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -215,45 +206,57 @@ export class Area implements IArea {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.code = _data["code"];
-            this.flag = _data["flag"];
+            this.link = _data["link"];
+            this.label = _data["label"];
         }
     }
 
-    static fromJS(data: any): Area {
+    static fromJS(data: any): ActionButton {
         data = typeof data === 'object' ? data : {};
-        let result = new Area();
+        let result = new ActionButton();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["code"] = this.code;
-        data["flag"] = this.flag;
+        data["link"] = this.link;
+        data["label"] = this.label;
         return data;
     }
 }
 
-export interface IArea {
-    id?: number;
-    name?: string | undefined;
-    code?: string | undefined;
-    flag?: string | undefined;
+export interface IActionButton {
+    link?: string | undefined;
+    label?: string | undefined;
 }
 
-export class AwayTeam implements IAwayTeam {
+export class AwayCompetitor implements IAwayCompetitor {
     id?: number;
+    countryId?: number;
+    sportId?: number;
     name?: string | undefined;
+    symbolicName?: string | undefined;
+    score?: number;
+    isQualified?: boolean;
+    toQualify?: boolean;
+    isWinner?: boolean;
+    redCards?: number;
+    nameForURL?: string | undefined;
+    type?: number;
+    popularityRank?: number;
+    imageVersion?: number;
+    color?: string | undefined;
+    mainCompetitionId?: number;
+    hasSquad?: boolean;
+    hasTransfers?: boolean;
+    competitorNum?: number;
+    hideOnSearch?: boolean;
+    hideOnCatalog?: boolean;
     shortName?: string | undefined;
-    tla?: string | undefined;
-    crest?: string | undefined;
+    longName?: string | undefined;
 
-    constructor(data?: IAwayTeam) {
+    constructor(data?: IAwayCompetitor) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -265,16 +268,126 @@ export class AwayTeam implements IAwayTeam {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
+            this.countryId = _data["countryId"];
+            this.sportId = _data["sportId"];
             this.name = _data["name"];
+            this.symbolicName = _data["symbolicName"];
+            this.score = _data["score"];
+            this.isQualified = _data["isQualified"];
+            this.toQualify = _data["toQualify"];
+            this.isWinner = _data["isWinner"];
+            this.redCards = _data["redCards"];
+            this.nameForURL = _data["nameForURL"];
+            this.type = _data["type"];
+            this.popularityRank = _data["popularityRank"];
+            this.imageVersion = _data["imageVersion"];
+            this.color = _data["color"];
+            this.mainCompetitionId = _data["mainCompetitionId"];
+            this.hasSquad = _data["hasSquad"];
+            this.hasTransfers = _data["hasTransfers"];
+            this.competitorNum = _data["competitorNum"];
+            this.hideOnSearch = _data["hideOnSearch"];
+            this.hideOnCatalog = _data["hideOnCatalog"];
             this.shortName = _data["shortName"];
-            this.tla = _data["tla"];
-            this.crest = _data["crest"];
+            this.longName = _data["longName"];
         }
     }
 
-    static fromJS(data: any): AwayTeam {
+    static fromJS(data: any): AwayCompetitor {
         data = typeof data === 'object' ? data : {};
-        let result = new AwayTeam();
+        let result = new AwayCompetitor();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["countryId"] = this.countryId;
+        data["sportId"] = this.sportId;
+        data["name"] = this.name;
+        data["symbolicName"] = this.symbolicName;
+        data["score"] = this.score;
+        data["isQualified"] = this.isQualified;
+        data["toQualify"] = this.toQualify;
+        data["isWinner"] = this.isWinner;
+        data["redCards"] = this.redCards;
+        data["nameForURL"] = this.nameForURL;
+        data["type"] = this.type;
+        data["popularityRank"] = this.popularityRank;
+        data["imageVersion"] = this.imageVersion;
+        data["color"] = this.color;
+        data["mainCompetitionId"] = this.mainCompetitionId;
+        data["hasSquad"] = this.hasSquad;
+        data["hasTransfers"] = this.hasTransfers;
+        data["competitorNum"] = this.competitorNum;
+        data["hideOnSearch"] = this.hideOnSearch;
+        data["hideOnCatalog"] = this.hideOnCatalog;
+        data["shortName"] = this.shortName;
+        data["longName"] = this.longName;
+        return data;
+    }
+}
+
+export interface IAwayCompetitor {
+    id?: number;
+    countryId?: number;
+    sportId?: number;
+    name?: string | undefined;
+    symbolicName?: string | undefined;
+    score?: number;
+    isQualified?: boolean;
+    toQualify?: boolean;
+    isWinner?: boolean;
+    redCards?: number;
+    nameForURL?: string | undefined;
+    type?: number;
+    popularityRank?: number;
+    imageVersion?: number;
+    color?: string | undefined;
+    mainCompetitionId?: number;
+    hasSquad?: boolean;
+    hasTransfers?: boolean;
+    competitorNum?: number;
+    hideOnSearch?: boolean;
+    hideOnCatalog?: boolean;
+    shortName?: string | undefined;
+    longName?: string | undefined;
+}
+
+export class Bookmaker implements IBookmaker {
+    id?: number;
+    name?: string | undefined;
+    link?: string | undefined;
+    nameForURL?: string | undefined;
+    actionButton?: ActionButton;
+    color?: string | undefined;
+    imageVersion?: number;
+
+    constructor(data?: IBookmaker) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.link = _data["link"];
+            this.nameForURL = _data["nameForURL"];
+            this.actionButton = _data["actionButton"] ? ActionButton.fromJS(_data["actionButton"]) : <any>undefined;
+            this.color = _data["color"];
+            this.imageVersion = _data["imageVersion"];
+        }
+    }
+
+    static fromJS(data: any): Bookmaker {
+        data = typeof data === 'object' ? data : {};
+        let result = new Bookmaker();
         result.init(data);
         return result;
     }
@@ -283,27 +396,49 @@ export class AwayTeam implements IAwayTeam {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        data["shortName"] = this.shortName;
-        data["tla"] = this.tla;
-        data["crest"] = this.crest;
+        data["link"] = this.link;
+        data["nameForURL"] = this.nameForURL;
+        data["actionButton"] = this.actionButton ? this.actionButton.toJSON() : <any>undefined;
+        data["color"] = this.color;
+        data["imageVersion"] = this.imageVersion;
         return data;
     }
 }
 
-export interface IAwayTeam {
+export interface IBookmaker {
     id?: number;
     name?: string | undefined;
-    shortName?: string | undefined;
-    tla?: string | undefined;
-    crest?: string | undefined;
+    link?: string | undefined;
+    nameForURL?: string | undefined;
+    actionButton?: ActionButton;
+    color?: string | undefined;
+    imageVersion?: number;
 }
 
 export class Competition implements ICompetition {
     id?: number;
+    countryId?: number;
+    sportId?: number;
     name?: string | undefined;
-    code?: string | undefined;
-    type?: string | undefined;
-    emblem?: string | undefined;
+    hasStandings?: boolean;
+    hasBrackets?: boolean;
+    nameForURL?: string | undefined;
+    totalGames?: number;
+    liveGames?: number;
+    popularityRank?: number;
+    hasActiveGames?: boolean;
+    imageVersion?: number;
+    currentStageType?: number;
+    color?: string | undefined;
+    competitorsType?: number;
+    currentPhaseNum?: number;
+    currentSeasonNum?: number;
+    currentStageNum?: number;
+    hideOnCatalog?: boolean;
+    hideOnSearch?: boolean;
+    isInternational?: boolean;
+    hasLiveStandings?: boolean | undefined;
+    hasStandingsGroups?: boolean | undefined;
 
     constructor(data?: ICompetition) {
         if (data) {
@@ -317,10 +452,28 @@ export class Competition implements ICompetition {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
+            this.countryId = _data["countryId"];
+            this.sportId = _data["sportId"];
             this.name = _data["name"];
-            this.code = _data["code"];
-            this.type = _data["type"];
-            this.emblem = _data["emblem"];
+            this.hasStandings = _data["hasStandings"];
+            this.hasBrackets = _data["hasBrackets"];
+            this.nameForURL = _data["nameForURL"];
+            this.totalGames = _data["totalGames"];
+            this.liveGames = _data["liveGames"];
+            this.popularityRank = _data["popularityRank"];
+            this.hasActiveGames = _data["hasActiveGames"];
+            this.imageVersion = _data["imageVersion"];
+            this.currentStageType = _data["currentStageType"];
+            this.color = _data["color"];
+            this.competitorsType = _data["competitorsType"];
+            this.currentPhaseNum = _data["currentPhaseNum"];
+            this.currentSeasonNum = _data["currentSeasonNum"];
+            this.currentStageNum = _data["currentStageNum"];
+            this.hideOnCatalog = _data["hideOnCatalog"];
+            this.hideOnSearch = _data["hideOnSearch"];
+            this.isInternational = _data["isInternational"];
+            this.hasLiveStandings = _data["hasLiveStandings"];
+            this.hasStandingsGroups = _data["hasStandingsGroups"];
         }
     }
 
@@ -334,27 +487,79 @@ export class Competition implements ICompetition {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["countryId"] = this.countryId;
+        data["sportId"] = this.sportId;
         data["name"] = this.name;
-        data["code"] = this.code;
-        data["type"] = this.type;
-        data["emblem"] = this.emblem;
+        data["hasStandings"] = this.hasStandings;
+        data["hasBrackets"] = this.hasBrackets;
+        data["nameForURL"] = this.nameForURL;
+        data["totalGames"] = this.totalGames;
+        data["liveGames"] = this.liveGames;
+        data["popularityRank"] = this.popularityRank;
+        data["hasActiveGames"] = this.hasActiveGames;
+        data["imageVersion"] = this.imageVersion;
+        data["currentStageType"] = this.currentStageType;
+        data["color"] = this.color;
+        data["competitorsType"] = this.competitorsType;
+        data["currentPhaseNum"] = this.currentPhaseNum;
+        data["currentSeasonNum"] = this.currentSeasonNum;
+        data["currentStageNum"] = this.currentStageNum;
+        data["hideOnCatalog"] = this.hideOnCatalog;
+        data["hideOnSearch"] = this.hideOnSearch;
+        data["isInternational"] = this.isInternational;
+        data["hasLiveStandings"] = this.hasLiveStandings;
+        data["hasStandingsGroups"] = this.hasStandingsGroups;
         return data;
     }
 }
 
 export interface ICompetition {
     id?: number;
+    countryId?: number;
+    sportId?: number;
     name?: string | undefined;
-    code?: string | undefined;
-    type?: string | undefined;
-    emblem?: string | undefined;
+    hasStandings?: boolean;
+    hasBrackets?: boolean;
+    nameForURL?: string | undefined;
+    totalGames?: number;
+    liveGames?: number;
+    popularityRank?: number;
+    hasActiveGames?: boolean;
+    imageVersion?: number;
+    currentStageType?: number;
+    color?: string | undefined;
+    competitorsType?: number;
+    currentPhaseNum?: number;
+    currentSeasonNum?: number;
+    currentStageNum?: number;
+    hideOnCatalog?: boolean;
+    hideOnSearch?: boolean;
+    isInternational?: boolean;
+    hasLiveStandings?: boolean | undefined;
+    hasStandingsGroups?: boolean | undefined;
 }
 
-export class FullTime implements IFullTime {
-    home?: number | undefined;
-    away?: number | undefined;
+export class Competitor implements ICompetitor {
+    id?: number;
+    countryId?: number;
+    sportId?: number;
+    name?: string | undefined;
+    symbolicName?: string | undefined;
+    nameForURL?: string | undefined;
+    type?: number;
+    popularityRank?: number;
+    imageVersion?: number;
+    color?: string | undefined;
+    mainCompetitionId?: number;
+    hasSquad?: boolean;
+    hasTransfers?: boolean;
+    competitorNum?: number;
+    hideOnSearch?: boolean;
+    hideOnCatalog?: boolean;
+    shortName?: string | undefined;
+    longName?: string | undefined;
 
-    constructor(data?: IFullTime) {
+    constructor(data?: ICompetitor) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -365,79 +570,88 @@ export class FullTime implements IFullTime {
 
     init(_data?: any) {
         if (_data) {
-            this.home = _data["home"];
-            this.away = _data["away"];
+            this.id = _data["id"];
+            this.countryId = _data["countryId"];
+            this.sportId = _data["sportId"];
+            this.name = _data["name"];
+            this.symbolicName = _data["symbolicName"];
+            this.nameForURL = _data["nameForURL"];
+            this.type = _data["type"];
+            this.popularityRank = _data["popularityRank"];
+            this.imageVersion = _data["imageVersion"];
+            this.color = _data["color"];
+            this.mainCompetitionId = _data["mainCompetitionId"];
+            this.hasSquad = _data["hasSquad"];
+            this.hasTransfers = _data["hasTransfers"];
+            this.competitorNum = _data["competitorNum"];
+            this.hideOnSearch = _data["hideOnSearch"];
+            this.hideOnCatalog = _data["hideOnCatalog"];
+            this.shortName = _data["shortName"];
+            this.longName = _data["longName"];
         }
     }
 
-    static fromJS(data: any): FullTime {
+    static fromJS(data: any): Competitor {
         data = typeof data === 'object' ? data : {};
-        let result = new FullTime();
+        let result = new Competitor();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["home"] = this.home;
-        data["away"] = this.away;
+        data["id"] = this.id;
+        data["countryId"] = this.countryId;
+        data["sportId"] = this.sportId;
+        data["name"] = this.name;
+        data["symbolicName"] = this.symbolicName;
+        data["nameForURL"] = this.nameForURL;
+        data["type"] = this.type;
+        data["popularityRank"] = this.popularityRank;
+        data["imageVersion"] = this.imageVersion;
+        data["color"] = this.color;
+        data["mainCompetitionId"] = this.mainCompetitionId;
+        data["hasSquad"] = this.hasSquad;
+        data["hasTransfers"] = this.hasTransfers;
+        data["competitorNum"] = this.competitorNum;
+        data["hideOnSearch"] = this.hideOnSearch;
+        data["hideOnCatalog"] = this.hideOnCatalog;
+        data["shortName"] = this.shortName;
+        data["longName"] = this.longName;
         return data;
     }
 }
 
-export interface IFullTime {
-    home?: number | undefined;
-    away?: number | undefined;
+export interface ICompetitor {
+    id?: number;
+    countryId?: number;
+    sportId?: number;
+    name?: string | undefined;
+    symbolicName?: string | undefined;
+    nameForURL?: string | undefined;
+    type?: number;
+    popularityRank?: number;
+    imageVersion?: number;
+    color?: string | undefined;
+    mainCompetitionId?: number;
+    hasSquad?: boolean;
+    hasTransfers?: boolean;
+    competitorNum?: number;
+    hideOnSearch?: boolean;
+    hideOnCatalog?: boolean;
+    shortName?: string | undefined;
+    longName?: string | undefined;
 }
 
-export class HalfTime implements IHalfTime {
-    home?: number | undefined;
-    away?: number | undefined;
-
-    constructor(data?: IHalfTime) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.home = _data["home"];
-            this.away = _data["away"];
-        }
-    }
-
-    static fromJS(data: any): HalfTime {
-        data = typeof data === 'object' ? data : {};
-        let result = new HalfTime();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["home"] = this.home;
-        data["away"] = this.away;
-        return data;
-    }
-}
-
-export interface IHalfTime {
-    home?: number | undefined;
-    away?: number | undefined;
-}
-
-export class HomeTeam implements IHomeTeam {
+export class Country implements ICountry {
     id?: number;
     name?: string | undefined;
-    shortName?: string | undefined;
-    tla?: string | undefined;
-    crest?: string | undefined;
+    totalGames?: number;
+    liveGames?: number;
+    nameForURL?: string | undefined;
+    imageVersion?: number;
 
-    constructor(data?: IHomeTeam) {
+    constructor(data?: ICountry) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -450,15 +664,16 @@ export class HomeTeam implements IHomeTeam {
         if (_data) {
             this.id = _data["id"];
             this.name = _data["name"];
-            this.shortName = _data["shortName"];
-            this.tla = _data["tla"];
-            this.crest = _data["crest"];
+            this.totalGames = _data["totalGames"];
+            this.liveGames = _data["liveGames"];
+            this.nameForURL = _data["nameForURL"];
+            this.imageVersion = _data["imageVersion"];
         }
     }
 
-    static fromJS(data: any): HomeTeam {
+    static fromJS(data: any): Country {
         data = typeof data === 'object' ? data : {};
-        let result = new HomeTeam();
+        let result = new Country();
         result.init(data);
         return result;
     }
@@ -467,19 +682,321 @@ export class HomeTeam implements IHomeTeam {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        data["shortName"] = this.shortName;
-        data["tla"] = this.tla;
-        data["crest"] = this.crest;
+        data["totalGames"] = this.totalGames;
+        data["liveGames"] = this.liveGames;
+        data["nameForURL"] = this.nameForURL;
+        data["imageVersion"] = this.imageVersion;
         return data;
     }
 }
 
-export interface IHomeTeam {
+export interface ICountry {
     id?: number;
     name?: string | undefined;
+    totalGames?: number;
+    liveGames?: number;
+    nameForURL?: string | undefined;
+    imageVersion?: number;
+}
+
+export class Game implements IGame {
+    id?: number;
+    sportId?: number;
+    competitionId?: number;
+    seasonNum?: number;
+    stageNum?: number;
+    roundNum?: number;
+    roundName?: string | undefined;
+    competitionDisplayName?: string | undefined;
+    startTime?: Date;
+    statusGroup?: number;
+    statusText?: string | undefined;
+    shortStatusText?: string | undefined;
+    gameTimeAndStatusDisplayType?: number;
+    justEnded?: boolean;
+    gameTime?: number;
+    gameTimeDisplay?: string | undefined;
+    hasLineups?: boolean;
+    hasMissingPlayers?: boolean;
+    hasFieldPositions?: boolean;
+    hasTVNetworks?: boolean;
+    odds?: Odds;
+    homeCompetitor?: HomeCompetitor;
+    awayCompetitor?: AwayCompetitor;
+    isHomeAwayInverted?: boolean;
+    hasStats?: boolean;
+    hasStandings?: boolean;
+    standingsName?: string | undefined;
+    hasBrackets?: boolean;
+    hasPreviousMeetings?: boolean;
+    hasRecentMatches?: boolean;
+    hasBets?: boolean;
+    hasPlayerBets?: boolean;
+    winner?: number;
+    homeAwayTeamOrder?: number;
+    hasNews?: boolean;
+    showCountdown?: boolean | undefined;
+
+    constructor(data?: IGame) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.sportId = _data["sportId"];
+            this.competitionId = _data["competitionId"];
+            this.seasonNum = _data["seasonNum"];
+            this.stageNum = _data["stageNum"];
+            this.roundNum = _data["roundNum"];
+            this.roundName = _data["roundName"];
+            this.competitionDisplayName = _data["competitionDisplayName"];
+            this.startTime = _data["startTime"] ? new Date(_data["startTime"].toString()) : <any>undefined;
+            this.statusGroup = _data["statusGroup"];
+            this.statusText = _data["statusText"];
+            this.shortStatusText = _data["shortStatusText"];
+            this.gameTimeAndStatusDisplayType = _data["gameTimeAndStatusDisplayType"];
+            this.justEnded = _data["justEnded"];
+            this.gameTime = _data["gameTime"];
+            this.gameTimeDisplay = _data["gameTimeDisplay"];
+            this.hasLineups = _data["hasLineups"];
+            this.hasMissingPlayers = _data["hasMissingPlayers"];
+            this.hasFieldPositions = _data["hasFieldPositions"];
+            this.hasTVNetworks = _data["hasTVNetworks"];
+            this.odds = _data["odds"] ? Odds.fromJS(_data["odds"]) : <any>undefined;
+            this.homeCompetitor = _data["homeCompetitor"] ? HomeCompetitor.fromJS(_data["homeCompetitor"]) : <any>undefined;
+            this.awayCompetitor = _data["awayCompetitor"] ? AwayCompetitor.fromJS(_data["awayCompetitor"]) : <any>undefined;
+            this.isHomeAwayInverted = _data["isHomeAwayInverted"];
+            this.hasStats = _data["hasStats"];
+            this.hasStandings = _data["hasStandings"];
+            this.standingsName = _data["standingsName"];
+            this.hasBrackets = _data["hasBrackets"];
+            this.hasPreviousMeetings = _data["hasPreviousMeetings"];
+            this.hasRecentMatches = _data["hasRecentMatches"];
+            this.hasBets = _data["hasBets"];
+            this.hasPlayerBets = _data["hasPlayerBets"];
+            this.winner = _data["winner"];
+            this.homeAwayTeamOrder = _data["homeAwayTeamOrder"];
+            this.hasNews = _data["hasNews"];
+            this.showCountdown = _data["showCountdown"];
+        }
+    }
+
+    static fromJS(data: any): Game {
+        data = typeof data === 'object' ? data : {};
+        let result = new Game();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sportId"] = this.sportId;
+        data["competitionId"] = this.competitionId;
+        data["seasonNum"] = this.seasonNum;
+        data["stageNum"] = this.stageNum;
+        data["roundNum"] = this.roundNum;
+        data["roundName"] = this.roundName;
+        data["competitionDisplayName"] = this.competitionDisplayName;
+        data["startTime"] = this.startTime ? this.startTime.toISOString() : <any>undefined;
+        data["statusGroup"] = this.statusGroup;
+        data["statusText"] = this.statusText;
+        data["shortStatusText"] = this.shortStatusText;
+        data["gameTimeAndStatusDisplayType"] = this.gameTimeAndStatusDisplayType;
+        data["justEnded"] = this.justEnded;
+        data["gameTime"] = this.gameTime;
+        data["gameTimeDisplay"] = this.gameTimeDisplay;
+        data["hasLineups"] = this.hasLineups;
+        data["hasMissingPlayers"] = this.hasMissingPlayers;
+        data["hasFieldPositions"] = this.hasFieldPositions;
+        data["hasTVNetworks"] = this.hasTVNetworks;
+        data["odds"] = this.odds ? this.odds.toJSON() : <any>undefined;
+        data["homeCompetitor"] = this.homeCompetitor ? this.homeCompetitor.toJSON() : <any>undefined;
+        data["awayCompetitor"] = this.awayCompetitor ? this.awayCompetitor.toJSON() : <any>undefined;
+        data["isHomeAwayInverted"] = this.isHomeAwayInverted;
+        data["hasStats"] = this.hasStats;
+        data["hasStandings"] = this.hasStandings;
+        data["standingsName"] = this.standingsName;
+        data["hasBrackets"] = this.hasBrackets;
+        data["hasPreviousMeetings"] = this.hasPreviousMeetings;
+        data["hasRecentMatches"] = this.hasRecentMatches;
+        data["hasBets"] = this.hasBets;
+        data["hasPlayerBets"] = this.hasPlayerBets;
+        data["winner"] = this.winner;
+        data["homeAwayTeamOrder"] = this.homeAwayTeamOrder;
+        data["hasNews"] = this.hasNews;
+        data["showCountdown"] = this.showCountdown;
+        return data;
+    }
+}
+
+export interface IGame {
+    id?: number;
+    sportId?: number;
+    competitionId?: number;
+    seasonNum?: number;
+    stageNum?: number;
+    roundNum?: number;
+    roundName?: string | undefined;
+    competitionDisplayName?: string | undefined;
+    startTime?: Date;
+    statusGroup?: number;
+    statusText?: string | undefined;
+    shortStatusText?: string | undefined;
+    gameTimeAndStatusDisplayType?: number;
+    justEnded?: boolean;
+    gameTime?: number;
+    gameTimeDisplay?: string | undefined;
+    hasLineups?: boolean;
+    hasMissingPlayers?: boolean;
+    hasFieldPositions?: boolean;
+    hasTVNetworks?: boolean;
+    odds?: Odds;
+    homeCompetitor?: HomeCompetitor;
+    awayCompetitor?: AwayCompetitor;
+    isHomeAwayInverted?: boolean;
+    hasStats?: boolean;
+    hasStandings?: boolean;
+    standingsName?: string | undefined;
+    hasBrackets?: boolean;
+    hasPreviousMeetings?: boolean;
+    hasRecentMatches?: boolean;
+    hasBets?: boolean;
+    hasPlayerBets?: boolean;
+    winner?: number;
+    homeAwayTeamOrder?: number;
+    hasNews?: boolean;
+    showCountdown?: boolean | undefined;
+}
+
+export class HomeCompetitor implements IHomeCompetitor {
+    id?: number;
+    countryId?: number;
+    sportId?: number;
+    name?: string | undefined;
+    symbolicName?: string | undefined;
+    score?: number;
+    isQualified?: boolean;
+    toQualify?: boolean;
+    isWinner?: boolean;
+    redCards?: number;
+    nameForURL?: string | undefined;
+    type?: number;
+    popularityRank?: number;
+    imageVersion?: number;
+    color?: string | undefined;
+    mainCompetitionId?: number;
+    hasSquad?: boolean;
+    hasTransfers?: boolean;
+    competitorNum?: number;
+    hideOnSearch?: boolean;
+    hideOnCatalog?: boolean;
     shortName?: string | undefined;
-    tla?: string | undefined;
-    crest?: string | undefined;
+    longName?: string | undefined;
+
+    constructor(data?: IHomeCompetitor) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.countryId = _data["countryId"];
+            this.sportId = _data["sportId"];
+            this.name = _data["name"];
+            this.symbolicName = _data["symbolicName"];
+            this.score = _data["score"];
+            this.isQualified = _data["isQualified"];
+            this.toQualify = _data["toQualify"];
+            this.isWinner = _data["isWinner"];
+            this.redCards = _data["redCards"];
+            this.nameForURL = _data["nameForURL"];
+            this.type = _data["type"];
+            this.popularityRank = _data["popularityRank"];
+            this.imageVersion = _data["imageVersion"];
+            this.color = _data["color"];
+            this.mainCompetitionId = _data["mainCompetitionId"];
+            this.hasSquad = _data["hasSquad"];
+            this.hasTransfers = _data["hasTransfers"];
+            this.competitorNum = _data["competitorNum"];
+            this.hideOnSearch = _data["hideOnSearch"];
+            this.hideOnCatalog = _data["hideOnCatalog"];
+            this.shortName = _data["shortName"];
+            this.longName = _data["longName"];
+        }
+    }
+
+    static fromJS(data: any): HomeCompetitor {
+        data = typeof data === 'object' ? data : {};
+        let result = new HomeCompetitor();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["countryId"] = this.countryId;
+        data["sportId"] = this.sportId;
+        data["name"] = this.name;
+        data["symbolicName"] = this.symbolicName;
+        data["score"] = this.score;
+        data["isQualified"] = this.isQualified;
+        data["toQualify"] = this.toQualify;
+        data["isWinner"] = this.isWinner;
+        data["redCards"] = this.redCards;
+        data["nameForURL"] = this.nameForURL;
+        data["type"] = this.type;
+        data["popularityRank"] = this.popularityRank;
+        data["imageVersion"] = this.imageVersion;
+        data["color"] = this.color;
+        data["mainCompetitionId"] = this.mainCompetitionId;
+        data["hasSquad"] = this.hasSquad;
+        data["hasTransfers"] = this.hasTransfers;
+        data["competitorNum"] = this.competitorNum;
+        data["hideOnSearch"] = this.hideOnSearch;
+        data["hideOnCatalog"] = this.hideOnCatalog;
+        data["shortName"] = this.shortName;
+        data["longName"] = this.longName;
+        return data;
+    }
+}
+
+export interface IHomeCompetitor {
+    id?: number;
+    countryId?: number;
+    sportId?: number;
+    name?: string | undefined;
+    symbolicName?: string | undefined;
+    score?: number;
+    isQualified?: boolean;
+    toQualify?: boolean;
+    isWinner?: boolean;
+    redCards?: number;
+    nameForURL?: string | undefined;
+    type?: number;
+    popularityRank?: number;
+    imageVersion?: number;
+    color?: string | undefined;
+    mainCompetitionId?: number;
+    hasSquad?: boolean;
+    hasTransfers?: boolean;
+    competitorNum?: number;
+    hideOnSearch?: boolean;
+    hideOnCatalog?: boolean;
+    shortName?: string | undefined;
+    longName?: string | undefined;
 }
 
 export class Int32ServiceResponse implements IInt32ServiceResponse {
@@ -526,21 +1043,13 @@ export interface IInt32ServiceResponse {
     message?: string | undefined;
 }
 
-export class Match implements IMatch {
+export class LineType implements ILineType {
     id?: number;
-    status?: string | undefined;
-    utcDate?: Date;
-    homeTeam?: HomeTeam;
-    awayTeam?: AwayTeam;
-    score?: Score;
-    area?: Area;
-    competition?: Competition;
-    season?: Season;
-    matchday?: number;
-    stage?: string | undefined;
-    lastUpdated?: Date;
+    name?: string | undefined;
+    title?: string | undefined;
+    internalOptionType?: number;
 
-    constructor(data?: IMatch) {
+    constructor(data?: ILineType) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -552,23 +1061,15 @@ export class Match implements IMatch {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
-            this.status = _data["status"];
-            this.utcDate = _data["utcDate"] ? new Date(_data["utcDate"].toString()) : <any>undefined;
-            this.homeTeam = _data["homeTeam"] ? HomeTeam.fromJS(_data["homeTeam"]) : <any>undefined;
-            this.awayTeam = _data["awayTeam"] ? AwayTeam.fromJS(_data["awayTeam"]) : <any>undefined;
-            this.score = _data["score"] ? Score.fromJS(_data["score"]) : <any>undefined;
-            this.area = _data["area"] ? Area.fromJS(_data["area"]) : <any>undefined;
-            this.competition = _data["competition"] ? Competition.fromJS(_data["competition"]) : <any>undefined;
-            this.season = _data["season"] ? Season.fromJS(_data["season"]) : <any>undefined;
-            this.matchday = _data["matchday"];
-            this.stage = _data["stage"];
-            this.lastUpdated = _data["lastUpdated"] ? new Date(_data["lastUpdated"].toString()) : <any>undefined;
+            this.name = _data["name"];
+            this.title = _data["title"];
+            this.internalOptionType = _data["internalOptionType"];
         }
     }
 
-    static fromJS(data: any): Match {
+    static fromJS(data: any): LineType {
         data = typeof data === 'object' ? data : {};
-        let result = new Match();
+        let result = new LineType();
         result.init(data);
         return result;
     }
@@ -576,43 +1077,31 @@ export class Match implements IMatch {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["status"] = this.status;
-        data["utcDate"] = this.utcDate ? this.utcDate.toISOString() : <any>undefined;
-        data["homeTeam"] = this.homeTeam ? this.homeTeam.toJSON() : <any>undefined;
-        data["awayTeam"] = this.awayTeam ? this.awayTeam.toJSON() : <any>undefined;
-        data["score"] = this.score ? this.score.toJSON() : <any>undefined;
-        data["area"] = this.area ? this.area.toJSON() : <any>undefined;
-        data["competition"] = this.competition ? this.competition.toJSON() : <any>undefined;
-        data["season"] = this.season ? this.season.toJSON() : <any>undefined;
-        data["matchday"] = this.matchday;
-        data["stage"] = this.stage;
-        data["lastUpdated"] = this.lastUpdated ? this.lastUpdated.toISOString() : <any>undefined;
+        data["name"] = this.name;
+        data["title"] = this.title;
+        data["internalOptionType"] = this.internalOptionType;
         return data;
     }
 }
 
-export interface IMatch {
+export interface ILineType {
     id?: number;
-    status?: string | undefined;
-    utcDate?: Date;
-    homeTeam?: HomeTeam;
-    awayTeam?: AwayTeam;
-    score?: Score;
-    area?: Area;
-    competition?: Competition;
-    season?: Season;
-    matchday?: number;
-    stage?: string | undefined;
-    lastUpdated?: Date;
+    name?: string | undefined;
+    title?: string | undefined;
+    internalOptionType?: number;
 }
 
-export class Score implements IScore {
-    winner?: string | undefined;
-    duration?: string | undefined;
-    fullTime?: FullTime;
-    halfTime?: HalfTime;
+export class Odds implements IOdds {
+    lineId?: number;
+    gameId?: number;
+    bookmakerId?: number;
+    lineTypeId?: number;
+    lineType?: LineType;
+    link?: string | undefined;
+    bookmaker?: Bookmaker;
+    options?: Option[] | undefined;
 
-    constructor(data?: IScore) {
+    constructor(data?: IOdds) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -623,44 +1112,261 @@ export class Score implements IScore {
 
     init(_data?: any) {
         if (_data) {
-            this.winner = _data["winner"];
-            this.duration = _data["duration"];
-            this.fullTime = _data["fullTime"] ? FullTime.fromJS(_data["fullTime"]) : <any>undefined;
-            this.halfTime = _data["halfTime"] ? HalfTime.fromJS(_data["halfTime"]) : <any>undefined;
+            this.lineId = _data["lineId"];
+            this.gameId = _data["gameId"];
+            this.bookmakerId = _data["bookmakerId"];
+            this.lineTypeId = _data["lineTypeId"];
+            this.lineType = _data["lineType"] ? LineType.fromJS(_data["lineType"]) : <any>undefined;
+            this.link = _data["link"];
+            this.bookmaker = _data["bookmaker"] ? Bookmaker.fromJS(_data["bookmaker"]) : <any>undefined;
+            if (Array.isArray(_data["options"])) {
+                this.options = [] as any;
+                for (let item of _data["options"])
+                    this.options!.push(Option.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): Score {
+    static fromJS(data: any): Odds {
         data = typeof data === 'object' ? data : {};
-        let result = new Score();
+        let result = new Odds();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["winner"] = this.winner;
-        data["duration"] = this.duration;
-        data["fullTime"] = this.fullTime ? this.fullTime.toJSON() : <any>undefined;
-        data["halfTime"] = this.halfTime ? this.halfTime.toJSON() : <any>undefined;
+        data["lineId"] = this.lineId;
+        data["gameId"] = this.gameId;
+        data["bookmakerId"] = this.bookmakerId;
+        data["lineTypeId"] = this.lineTypeId;
+        data["lineType"] = this.lineType ? this.lineType.toJSON() : <any>undefined;
+        data["link"] = this.link;
+        data["bookmaker"] = this.bookmaker ? this.bookmaker.toJSON() : <any>undefined;
+        if (Array.isArray(this.options)) {
+            data["options"] = [];
+            for (let item of this.options)
+                data["options"].push(item.toJSON());
+        }
         return data;
     }
 }
 
-export interface IScore {
-    winner?: string | undefined;
-    duration?: string | undefined;
-    fullTime?: FullTime;
-    halfTime?: HalfTime;
+export interface IOdds {
+    lineId?: number;
+    gameId?: number;
+    bookmakerId?: number;
+    lineTypeId?: number;
+    lineType?: LineType;
+    link?: string | undefined;
+    bookmaker?: Bookmaker;
+    options?: Option[] | undefined;
 }
 
-export class Season implements ISeason {
-    id?: number;
-    startDate?: string | undefined;
-    endDate?: string | undefined;
-    currentMatchday?: number;
+export class OldRate implements IOldRate {
+    decimal?: number;
+    fractional?: string | undefined;
+    american?: string | undefined;
 
-    constructor(data?: ISeason) {
+    constructor(data?: IOldRate) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.decimal = _data["decimal"];
+            this.fractional = _data["fractional"];
+            this.american = _data["american"];
+        }
+    }
+
+    static fromJS(data: any): OldRate {
+        data = typeof data === 'object' ? data : {};
+        let result = new OldRate();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["decimal"] = this.decimal;
+        data["fractional"] = this.fractional;
+        data["american"] = this.american;
+        return data;
+    }
+}
+
+export interface IOldRate {
+    decimal?: number;
+    fractional?: string | undefined;
+    american?: string | undefined;
+}
+
+export class Option implements IOption {
+    num?: number;
+    name?: string | undefined;
+    rate?: Rate;
+    bookmakerId?: number;
+    prematchRate?: PrematchRate;
+    link?: string | undefined;
+    trend?: number;
+    oldRate?: OldRate;
+
+    constructor(data?: IOption) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.num = _data["num"];
+            this.name = _data["name"];
+            this.rate = _data["rate"] ? Rate.fromJS(_data["rate"]) : <any>undefined;
+            this.bookmakerId = _data["bookmakerId"];
+            this.prematchRate = _data["prematchRate"] ? PrematchRate.fromJS(_data["prematchRate"]) : <any>undefined;
+            this.link = _data["link"];
+            this.trend = _data["trend"];
+            this.oldRate = _data["oldRate"] ? OldRate.fromJS(_data["oldRate"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): Option {
+        data = typeof data === 'object' ? data : {};
+        let result = new Option();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["num"] = this.num;
+        data["name"] = this.name;
+        data["rate"] = this.rate ? this.rate.toJSON() : <any>undefined;
+        data["bookmakerId"] = this.bookmakerId;
+        data["prematchRate"] = this.prematchRate ? this.prematchRate.toJSON() : <any>undefined;
+        data["link"] = this.link;
+        data["trend"] = this.trend;
+        data["oldRate"] = this.oldRate ? this.oldRate.toJSON() : <any>undefined;
+        return data;
+    }
+}
+
+export interface IOption {
+    num?: number;
+    name?: string | undefined;
+    rate?: Rate;
+    bookmakerId?: number;
+    prematchRate?: PrematchRate;
+    link?: string | undefined;
+    trend?: number;
+    oldRate?: OldRate;
+}
+
+export class PrematchRate implements IPrematchRate {
+    decimal?: number;
+    fractional?: string | undefined;
+    american?: string | undefined;
+
+    constructor(data?: IPrematchRate) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.decimal = _data["decimal"];
+            this.fractional = _data["fractional"];
+            this.american = _data["american"];
+        }
+    }
+
+    static fromJS(data: any): PrematchRate {
+        data = typeof data === 'object' ? data : {};
+        let result = new PrematchRate();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["decimal"] = this.decimal;
+        data["fractional"] = this.fractional;
+        data["american"] = this.american;
+        return data;
+    }
+}
+
+export interface IPrematchRate {
+    decimal?: number;
+    fractional?: string | undefined;
+    american?: string | undefined;
+}
+
+export class Rate implements IRate {
+    decimal?: number;
+    fractional?: string | undefined;
+    american?: string | undefined;
+
+    constructor(data?: IRate) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.decimal = _data["decimal"];
+            this.fractional = _data["fractional"];
+            this.american = _data["american"];
+        }
+    }
+
+    static fromJS(data: any): Rate {
+        data = typeof data === 'object' ? data : {};
+        let result = new Rate();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["decimal"] = this.decimal;
+        data["fractional"] = this.fractional;
+        data["american"] = this.american;
+        return data;
+    }
+}
+
+export interface IRate {
+    decimal?: number;
+    fractional?: string | undefined;
+    american?: string | undefined;
+}
+
+export class Sport implements ISport {
+    id?: number;
+    name?: string | undefined;
+    nameForURL?: string | undefined;
+    drawSupport?: boolean;
+    imageVersion?: number;
+
+    constructor(data?: ISport) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -672,15 +1378,16 @@ export class Season implements ISeason {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
-            this.startDate = _data["startDate"];
-            this.endDate = _data["endDate"];
-            this.currentMatchday = _data["currentMatchday"];
+            this.name = _data["name"];
+            this.nameForURL = _data["nameForURL"];
+            this.drawSupport = _data["drawSupport"];
+            this.imageVersion = _data["imageVersion"];
         }
     }
 
-    static fromJS(data: any): Season {
+    static fromJS(data: any): Sport {
         data = typeof data === 'object' ? data : {};
-        let result = new Season();
+        let result = new Sport();
         result.init(data);
         return result;
     }
@@ -688,18 +1395,136 @@ export class Season implements ISeason {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["startDate"] = this.startDate;
-        data["endDate"] = this.endDate;
-        data["currentMatchday"] = this.currentMatchday;
+        data["name"] = this.name;
+        data["nameForURL"] = this.nameForURL;
+        data["drawSupport"] = this.drawSupport;
+        data["imageVersion"] = this.imageVersion;
         return data;
     }
 }
 
-export interface ISeason {
+export interface ISport {
     id?: number;
-    startDate?: string | undefined;
-    endDate?: string | undefined;
-    currentMatchday?: number;
+    name?: string | undefined;
+    nameForURL?: string | undefined;
+    drawSupport?: boolean;
+    imageVersion?: number;
+}
+
+export class SportradarResponse implements ISportradarResponse {
+    lastUpdateId?: number;
+    requestedUpdateId?: number;
+    ttl?: number;
+    sports?: Sport[] | undefined;
+    countries?: Country[] | undefined;
+    competitions?: Competition[] | undefined;
+    competitors?: Competitor[] | undefined;
+    games?: Game[] | undefined;
+    bookmakers?: Bookmaker[] | undefined;
+
+    constructor(data?: ISportradarResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.lastUpdateId = _data["lastUpdateId"];
+            this.requestedUpdateId = _data["requestedUpdateId"];
+            this.ttl = _data["ttl"];
+            if (Array.isArray(_data["sports"])) {
+                this.sports = [] as any;
+                for (let item of _data["sports"])
+                    this.sports!.push(Sport.fromJS(item));
+            }
+            if (Array.isArray(_data["countries"])) {
+                this.countries = [] as any;
+                for (let item of _data["countries"])
+                    this.countries!.push(Country.fromJS(item));
+            }
+            if (Array.isArray(_data["competitions"])) {
+                this.competitions = [] as any;
+                for (let item of _data["competitions"])
+                    this.competitions!.push(Competition.fromJS(item));
+            }
+            if (Array.isArray(_data["competitors"])) {
+                this.competitors = [] as any;
+                for (let item of _data["competitors"])
+                    this.competitors!.push(Competitor.fromJS(item));
+            }
+            if (Array.isArray(_data["games"])) {
+                this.games = [] as any;
+                for (let item of _data["games"])
+                    this.games!.push(Game.fromJS(item));
+            }
+            if (Array.isArray(_data["bookmakers"])) {
+                this.bookmakers = [] as any;
+                for (let item of _data["bookmakers"])
+                    this.bookmakers!.push(Bookmaker.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SportradarResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SportradarResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["lastUpdateId"] = this.lastUpdateId;
+        data["requestedUpdateId"] = this.requestedUpdateId;
+        data["ttl"] = this.ttl;
+        if (Array.isArray(this.sports)) {
+            data["sports"] = [];
+            for (let item of this.sports)
+                data["sports"].push(item.toJSON());
+        }
+        if (Array.isArray(this.countries)) {
+            data["countries"] = [];
+            for (let item of this.countries)
+                data["countries"].push(item.toJSON());
+        }
+        if (Array.isArray(this.competitions)) {
+            data["competitions"] = [];
+            for (let item of this.competitions)
+                data["competitions"].push(item.toJSON());
+        }
+        if (Array.isArray(this.competitors)) {
+            data["competitors"] = [];
+            for (let item of this.competitors)
+                data["competitors"].push(item.toJSON());
+        }
+        if (Array.isArray(this.games)) {
+            data["games"] = [];
+            for (let item of this.games)
+                data["games"].push(item.toJSON());
+        }
+        if (Array.isArray(this.bookmakers)) {
+            data["bookmakers"] = [];
+            for (let item of this.bookmakers)
+                data["bookmakers"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ISportradarResponse {
+    lastUpdateId?: number;
+    requestedUpdateId?: number;
+    ttl?: number;
+    sports?: Sport[] | undefined;
+    countries?: Country[] | undefined;
+    competitions?: Competition[] | undefined;
+    competitors?: Competitor[] | undefined;
+    games?: Game[] | undefined;
+    bookmakers?: Bookmaker[] | undefined;
 }
 
 export class StringServiceResponse implements IStringServiceResponse {

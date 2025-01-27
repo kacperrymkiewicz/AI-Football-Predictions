@@ -13,8 +13,14 @@
           @if(loadingStateService.hasError('liveMatches')) {
             <p>blad</p>
           } @else {
-            @for (match of matchService.liveMatches(); track $index) {
+            @if(matchService.liveMatches()?.games!.length > 0) {
+              <h3>Znaleziono {{ matchService.liveMatches()?.games?.length }} meczy</h3>
+            }
+            @for (match of matchService.liveMatches()?.games; track $index) {
               <app-match-item [match]="match"></app-match-item>
+            }
+            @empty {
+              <h3>W najbliższym czasie nie są rozgrywane żadne mecze</h3>
             }
           }
         }

@@ -5,13 +5,23 @@
   background-color: $primary-dark-color;
   padding: 15px 30px;
 
+  .home-team {
+    justify-content: flex-start;
+  }
+
   .away-team {
     text-align: right;
+    justify-content: flex-end;
   }
 
   .team {
+    display: flex;
+    align-items: center;
+    height: 100%;
+
     img {
-      height: 64px;
+      // height: 64px;
+      margin: 10px;
     }
   }
 
@@ -22,5 +32,8 @@
     color: $primary-color;
     margin: 0 12px;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }

@@ -21,7 +21,6 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Models
         public int Type { get; set; }
         public int PopularityRank { get; set; }
         public int ImageVersion { get; set; }
-        public List<Ranking> Rankings { get; set; }
         public string Color { get; set; }
         public int MainCompetitionId { get; set; }
         public bool HasSquad { get; set; }
@@ -29,6 +28,9 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Models
         public int CompetitorNum { get; set; }
         public bool HideOnSearch { get; set; }
         public bool HideOnCatalog { get; set; }
+        public string ShortName { get; set; }
+        public string LongName { get; set; }
+        public string Logo { get; set; }
     }
 
 }
