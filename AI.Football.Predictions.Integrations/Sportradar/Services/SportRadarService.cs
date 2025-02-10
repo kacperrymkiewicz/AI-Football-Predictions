@@ -36,10 +36,20 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
             return deserializedResponse;
         }
 
-        public async Task<> GetMatchDetailsById(int gameId) {
+        public async Task<SportradarMatchDetailsResponse> GetMatchDetailsById(int gameId) {
             var client = _httpClientFactory.CreateClient("Sportradar");
 
-            var response = await client.GetAsync($"web/game/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&gameId={id}&topBookmaker=151");
+            var response = await client.GetAsync($"web/game/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&gameId={gameId}&topBookmaker=151");
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("Error fetching match details");
+
+            var content = await response.Content.ReadAsStringAsync();
+            var deserializedResponse = JsonSerializer.Deserialize<SportradarMatchDetailsResponse>(content, new JsonSerializerOptions {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return deserializedResponse;
         }
     }
 }

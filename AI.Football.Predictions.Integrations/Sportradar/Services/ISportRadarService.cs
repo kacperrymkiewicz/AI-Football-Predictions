@@ -9,5 +9,6 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
     public interface ISportradarService
     {
         Task<SportradarResponse> GetLiveMatchesAsync();
+        Task<SportradarMatchDetailsResponse> GetMatchDetailsById(int gameId);
     }
 }

@@ -23,21 +23,6 @@ namespace AI.Football.Predictions.API.Controllers
             _sportradarService = sportradarService;
         }
 
-        // [HttpGet("Live", Name = "GetLiveMatches")]
-        // [EndpointSummary("Gets the list of live football matches")]
-        // public async Task<ActionResult<List<Match>>> GetLiveMatches()
-        // {
-        //     try
-        //     {
-        //         var liveMatches = await _footballDataService.GetLiveMatchesAsync();
-        //         return Ok(liveMatches);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, new { Message = ex.Message });
-        //     }
-        // }
-
         [HttpGet("Live", Name = "GetLiveMatches")]
         [EndpointSummary("Gets the list of live football matches")]
         public async Task<ActionResult<SportradarResponse>> GetLiveMatches()
@@ -53,20 +38,19 @@ namespace AI.Football.Predictions.API.Controllers
             }
         }
 
-        // [HttpGet("Live/Sportradar", Name = "GetLiveMatchesSportradar")]
-        // [EndpointSummary("Gets the list of live football matches from Sportradar data")]
-        // public async Task<ActionResult<SportradarResponse>> GetLiveMatchesSportradar()
-        // {
-        //     try
-        //     {
-        //         var liveMatches = await _sportradarService.GetLiveMatchesAsync();
-        //         return Ok(liveMatches);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         return StatusCode(500, new { Message = ex.Message });
-        //     }
-        // }
-
+        [HttpGet("{id}", Name = "GetMatchDetails")]
+        [EndpointSummary("Gets match details")]
+        public async Task<ActionResult<SportradarResponse>> GetMatchDetails(int id)
+        {
+            try
+            {
+                var matchDetails = await _sportradarService.GetMatchDetailsById(id);
+                return Ok(matchDetails);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
+            }
+        }
     }
 }
