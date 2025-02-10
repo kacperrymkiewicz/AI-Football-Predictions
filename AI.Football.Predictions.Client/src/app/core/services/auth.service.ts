@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { afterNextRender, inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { Client, StringServiceResponse, UserLoginDto } from '../api-client/api-client';
+import { Client, StringServiceResponse, UserLoginDto, UserRegisterDto } from '../api-client/api-client';
 import { BrowserStorageService } from './browser-storage.service';
 import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
@@ -35,6 +35,10 @@ export class AuthService {
         }
       })
     )
+  }
+
+  public registerUser(userData: UserRegisterDto) {
+    return this.http.register(userData);
   }
 
   public getUserData(): User | null {

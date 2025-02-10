@@ -1,1 +1,39 @@
-<p>register works!</p>
+<section id="login">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div class="register-container">
+          <h2>Rejestracja</h2>
+          <form (ngSubmit)="onRegisterSubmit()">
+            <div class="form-group">
+              <label for="firstname" class="form-label">Imię:</label>
+              <input type="text" id="firstname" name="firstname" class="form-control" [(ngModel)]="enteredFirstName" required>
+            </div>
+            <div class="form-group">
+              <label for="lastname" class="form-label">Nazwisko:</label>
+              <input type="text" id="lastname" name="lastname" class="form-control" [(ngModel)]="enteredLastName" required>
+            </div>
+            <div class="form-group">
+              <label for="email" class="form-label">Email:</label>
+              <input type="email" id="email" name="email" class="form-control" [(ngModel)]="enteredEmail" required>
+            </div>
+            <div class="form-group">
+              <label for="password" class="form-label">Hasło:</label>
+              <input type="password" id="password" name="password" class="form-control" [(ngModel)]="enteredPassword" required>
+            </div>
+            <button class="btn btn-primary mt-3" type="submit" [disabled]="isFetching()">
+              @if (isFetching()) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              }
+              Zarejestruj się
+            </button>
+            @if (error()) {
+              <p class="mt-3" style="color: red; text-align: center;">{{ error() }}</p>
+            }
+            <h5 class="mt-3">Posiadasz już konto? <a routerLink="/auth/login">Zaloguj się</a></h5>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
