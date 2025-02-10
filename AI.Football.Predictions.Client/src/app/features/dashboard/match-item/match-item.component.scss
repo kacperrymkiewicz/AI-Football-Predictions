@@ -1,5 +1,10 @@
 @import 'variables';
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 .match-item {
   margin: 20px 0;
   background-color: $primary-dark-color;
