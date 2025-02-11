@@ -1,1 +1,23 @@
-<p>match-details works!</p>
+<section id="match-details">
+  <div class="container">
+    <div class="row">
+      @if (loadingStateService.isLoading('matchDetails')) {
+        <div class="loading-spinner">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <h3>Trwa wczytywanie meczu...</h3>
+        </div>
+      } @else {
+        <h1>{{ match.game?.homeCompetitor?.name }} - {{ match.game?.awayCompetitor?.name }}</h1>
+        <div class="col-md-6">
+          <div class="match-info">
+            <p>{{ match.game?.startTime }}</p>
+            <p>{{ match.game?.statusText }}</p>
+            <p>{{ match.game?.homeCompetitor?.score }} - {{ match.game?.awayCompetitor?.score }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -189,6 +189,61 @@ export class Client {
         }
         return _observableOf(null as any);
     }
+
+    /**
+     * Gets match details
+     * @return OK
+     */
+    getMatchDetails(id: number): Observable<SportradarMatchDetailsResponse> {
+        let url_ = this.baseUrl + "/api/Matches/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMatchDetails(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMatchDetails(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SportradarMatchDetailsResponse>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SportradarMatchDetailsResponse>;
+        }));
+    }
+
+    protected processGetMatchDetails(response: HttpResponseBase): Observable<SportradarMatchDetailsResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SportradarMatchDetailsResponse.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 export class ActionButton implements IActionButton {
@@ -255,6 +310,7 @@ export class AwayCompetitor implements IAwayCompetitor {
     hideOnCatalog?: boolean;
     shortName?: string | undefined;
     longName?: string | undefined;
+    logo?: string | undefined;
 
     constructor(data?: IAwayCompetitor) {
         if (data) {
@@ -290,6 +346,7 @@ export class AwayCompetitor implements IAwayCompetitor {
             this.hideOnCatalog = _data["hideOnCatalog"];
             this.shortName = _data["shortName"];
             this.longName = _data["longName"];
+            this.logo = _data["logo"];
         }
     }
 
@@ -325,6 +382,7 @@ export class AwayCompetitor implements IAwayCompetitor {
         data["hideOnCatalog"] = this.hideOnCatalog;
         data["shortName"] = this.shortName;
         data["longName"] = this.longName;
+        data["logo"] = this.logo;
         return data;
     }
 }
@@ -353,6 +411,7 @@ export interface IAwayCompetitor {
     hideOnCatalog?: boolean;
     shortName?: string | undefined;
     longName?: string | undefined;
+    logo?: string | undefined;
 }
 
 export class Bookmaker implements IBookmaker {
@@ -899,6 +958,7 @@ export class HomeCompetitor implements IHomeCompetitor {
     hideOnCatalog?: boolean;
     shortName?: string | undefined;
     longName?: string | undefined;
+    logo?: string | undefined;
 
     constructor(data?: IHomeCompetitor) {
         if (data) {
@@ -934,6 +994,7 @@ export class HomeCompetitor implements IHomeCompetitor {
             this.hideOnCatalog = _data["hideOnCatalog"];
             this.shortName = _data["shortName"];
             this.longName = _data["longName"];
+            this.logo = _data["logo"];
         }
     }
 
@@ -969,6 +1030,7 @@ export class HomeCompetitor implements IHomeCompetitor {
         data["hideOnCatalog"] = this.hideOnCatalog;
         data["shortName"] = this.shortName;
         data["longName"] = this.longName;
+        data["logo"] = this.logo;
         return data;
     }
 }
@@ -997,6 +1059,7 @@ export interface IHomeCompetitor {
     hideOnCatalog?: boolean;
     shortName?: string | undefined;
     longName?: string | undefined;
+    logo?: string | undefined;
 }
 
 export class Int32ServiceResponse implements IInt32ServiceResponse {
@@ -1409,6 +1472,90 @@ export interface ISport {
     nameForURL?: string | undefined;
     drawSupport?: boolean;
     imageVersion?: number;
+}
+
+export class SportradarMatchDetailsResponse implements ISportradarMatchDetailsResponse {
+    lastUpdateId?: number;
+    requestedUpdateId?: number;
+    ttl?: number;
+    game?: Game;
+    sports?: Sport[] | undefined;
+    countries?: Country[] | undefined;
+    competitions?: Competition[] | undefined;
+
+    constructor(data?: ISportradarMatchDetailsResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.lastUpdateId = _data["lastUpdateId"];
+            this.requestedUpdateId = _data["requestedUpdateId"];
+            this.ttl = _data["ttl"];
+            this.game = _data["game"] ? Game.fromJS(_data["game"]) : <any>undefined;
+            if (Array.isArray(_data["sports"])) {
+                this.sports = [] as any;
+                for (let item of _data["sports"])
+                    this.sports!.push(Sport.fromJS(item));
+            }
+            if (Array.isArray(_data["countries"])) {
+                this.countries = [] as any;
+                for (let item of _data["countries"])
+                    this.countries!.push(Country.fromJS(item));
+            }
+            if (Array.isArray(_data["competitions"])) {
+                this.competitions = [] as any;
+                for (let item of _data["competitions"])
+                    this.competitions!.push(Competition.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): SportradarMatchDetailsResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new SportradarMatchDetailsResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["lastUpdateId"] = this.lastUpdateId;
+        data["requestedUpdateId"] = this.requestedUpdateId;
+        data["ttl"] = this.ttl;
+        data["game"] = this.game ? this.game.toJSON() : <any>undefined;
+        if (Array.isArray(this.sports)) {
+            data["sports"] = [];
+            for (let item of this.sports)
+                data["sports"].push(item.toJSON());
+        }
+        if (Array.isArray(this.countries)) {
+            data["countries"] = [];
+            for (let item of this.countries)
+                data["countries"].push(item.toJSON());
+        }
+        if (Array.isArray(this.competitions)) {
+            data["competitions"] = [];
+            for (let item of this.competitions)
+                data["competitions"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ISportradarMatchDetailsResponse {
+    lastUpdateId?: number;
+    requestedUpdateId?: number;
+    ttl?: number;
+    game?: Game;
+    sports?: Sport[] | undefined;
+    countries?: Country[] | undefined;
+    competitions?: Competition[] | undefined;
 }
 
 export class SportradarResponse implements ISportradarResponse {

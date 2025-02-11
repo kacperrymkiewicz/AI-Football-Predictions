@@ -40,7 +40,7 @@ namespace AI.Football.Predictions.API.Controllers
 
         [HttpGet("{id}", Name = "GetMatchDetails")]
         [EndpointSummary("Gets match details")]
-        public async Task<ActionResult<SportradarResponse>> GetMatchDetails(int id)
+        public async Task<ActionResult<SportradarMatchDetailsResponse>> GetMatchDetails(int id)
         {
             try
             {
