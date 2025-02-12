@@ -2,13 +2,13 @@
   <div class="match-item">
     <div class="row">
       <div class="col-md-5">
-        <div class="home-team team"><img [src]="getTeamLogoUrl(match.homeCompetitor!.id!)" [alt]="match.homeCompetitor?.name "> {{ match.homeCompetitor?.name }}</div>
+        <div class="home-team team"><img [src]="getTeamLogoUrl(match.homeCompetitor!.id!)" [alt]="match.homeCompetitor?.name " loading="lazy"> {{ match.homeCompetitor?.name }}</div>
       </div>
       <div class="col-md-2">
         <div class="match-separator">vs</div>
       </div>
       <div class="col-md-5">
-        <div class="away-team team"><img [src]="getTeamLogoUrl(match.awayCompetitor!.id!)" [alt]="match.awayCompetitor?.name"> {{ match.awayCompetitor?.name }}</div>
+        <div class="away-team team"><img [src]="getTeamLogoUrl(match.awayCompetitor!.id!)" [alt]="match.awayCompetitor?.name" loading="lazy"> {{ match.awayCompetitor?.name }}</div>
       </div>
     </div>
   </div>

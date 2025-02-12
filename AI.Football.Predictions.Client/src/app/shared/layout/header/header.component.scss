@@ -1,25 +1,34 @@
 @import 'variables';
 
 header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
+  border-bottom: 1px solid $primary-color;
+  margin-bottom: 20px;
+  
   .navbar {
-    background-color: $background-color;
+    background-color: $primary-dark-color;
+    padding: 16px 10px;
 
     .navbar-toggler {
-      border-color: white;
+      border-color: $primary-color;
     }
 
     .navbar-toggler-icon {
       background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
     }
 
-    .nav-link {
-      color: white;
-    }
-
-    .nav-link.active {
-      color: $primary-color;
+    .nav-item {
+      background: $button-dark;
+      padding: 3px 10px;
+      border-radius: 10px;
+      margin: 0 7px;
+      
+      .nav-link {
+        color: white;
+      }
+  
+      .nav-link.active {
+        color: $primary-color;
+      }
     }
   }
 }
@@ -86,8 +95,8 @@ header {
   border-radius: 0px 0px 12px 12px;
   border-top: none;
   z-index: 2;
-  top: 52px;
-  right: -15px;
+  top: 59px;
+  right: -8px;
   box-shadow: 0px 15px 15px 0px rgba(0, 0, 0, 0.4);
   cursor: default;
 }
@@ -103,7 +112,7 @@ header {
   padding: 5px 0;
   border-radius: 10px;
   margin: 7px 0;
-  background: #2f324e;
+  background: $button-dark;
   text-align: center;
   cursor: pointer;
 }
@@ -114,7 +123,7 @@ header {
 }
 
 .profile .dropdown-menu li:hover {
-  background-color: #1d1e2a;
+  background-color: $button-dark-hover;
 }
 
 .profile .profile-arrow.open {
