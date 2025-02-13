@@ -33,7 +33,7 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
                 PropertyNameCaseInsensitive = true
             });
 
-            return deserializedResponse;
+            return deserializedResponse!;
         }
 
         public async Task<SportradarMatchDetailsResponse> GetMatchDetailsById(int gameId) {
@@ -49,7 +49,23 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
                 PropertyNameCaseInsensitive = true
             });
 
-            return deserializedResponse;
+            return deserializedResponse!;
+        }
+
+        public async Task<SportradarHead2HeadResponse> GetHead2HeadMatchesById(int gameId) {
+            var client = _httpClientFactory.CreateClient("Sportradar");
+
+            var response = await client.GetAsync($"web/games/h2h/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&gameId={gameId}");
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("Error fetching h2h matches");
+
+            var content = await response.Content.ReadAsStringAsync();
+            var deserializedResponse = JsonSerializer.Deserialize<SportradarHead2HeadResponse>(content, new JsonSerializerOptions {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return deserializedResponse!;
         }
     }
 }

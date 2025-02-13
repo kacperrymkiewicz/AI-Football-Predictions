@@ -52,5 +52,20 @@ namespace AI.Football.Predictions.API.Controllers
                 return StatusCode(500, new { Message = ex.Message });
             }
         }
+
+        [HttpGet("{id}/Head2head", Name = "GetH2hMatches")]
+        [EndpointSummary("Gets head2head matches by matchId")]
+        public async Task<ActionResult<SportradarHead2HeadResponse>> GetHead2HeadMatches(int id)
+        {
+            try
+            {
+                var matchDetails = await _sportradarService.GetHead2HeadMatchesById(id);
+                return Ok(matchDetails);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
+            }
+        }
     }
 }

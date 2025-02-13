@@ -1,19 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
+using System.Collections.Generic; 
+using System; 
 namespace AI.Football.Predictions.Integrations.Sportradar.Models
-{
-    public class Game
+{ 
+    public class H2hGame
     {
         public int Id { get; set; }
         public int SportId { get; set; }
         public int CompetitionId { get; set; }
         public int SeasonNum { get; set; }
         public int StageNum { get; set; }
-        public int RoundNum { get; set; }
-        public string RoundName { get; set; }
+        public int GroupNum { get; set; }
+        public string StageName { get; set; }
         public string CompetitionDisplayName { get; set; }
         public DateTime StartTime { get; set; }
         public int StatusGroup { get; set; }
@@ -23,27 +20,22 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Models
         public bool JustEnded { get; set; }
         public double GameTime { get; set; }
         public string GameTimeDisplay { get; set; }
-        public bool HasLineups { get; set; }
-        public bool HasMissingPlayers { get; set; }
-        public bool HasFieldPositions { get; set; }
         public bool HasTVNetworks { get; set; }
-        public Odds Odds { get; set; }
+        public string AggregateText { get; set; }
+        public string ShortAggregateText { get; set; }
         public HomeCompetitor HomeCompetitor { get; set; }
         public AwayCompetitor AwayCompetitor { get; set; }
-        public List<H2hGame> H2hGames { get; set; }
         public bool IsHomeAwayInverted { get; set; }
-        public bool HasStats { get; set; }
         public bool HasStandings { get; set; }
         public string StandingsName { get; set; }
         public bool HasBrackets { get; set; }
         public bool HasPreviousMeetings { get; set; }
         public bool HasRecentMatches { get; set; }
-        public bool HasBets { get; set; }
-        public bool HasPlayerBets { get; set; }
         public int Winner { get; set; }
         public int HomeAwayTeamOrder { get; set; }
-        public bool HasNews { get; set; }
-        public bool? ShowCountdown { get; set; }
+        public bool HasPointByPoint { get; set; }
+        public List<double> Scores { get; set; }
+        public int? RoundNum { get; set; }
     }
 
 }

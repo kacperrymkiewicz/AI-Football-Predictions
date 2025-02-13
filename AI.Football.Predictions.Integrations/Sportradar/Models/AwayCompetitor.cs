@@ -31,6 +31,7 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Models
         public string ShortName { get; set; }
         public string LongName { get; set; }
         public string Logo { get; set; }
+        public List<RecentGame> RecentGames { get; set; }
     }
 
 }
