@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Client, SportradarMatchDetailsResponse, SportradarResponse } from '../api-client/api-client';
+import { Client, SportradarHead2HeadResponse, SportradarMatchDetailsResponse, SportradarResponse } from '../api-client/api-client';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
@@ -34,5 +34,9 @@ export class MatchService {
 
   public getMatchDetails(matchId: number): Observable<SportradarMatchDetailsResponse> {
     return this.http.getMatchDetails(matchId);
+  }
+
+  public getH2hMatches(matchId: number): Observable<SportradarHead2HeadResponse> {
+    return this.http.getH2hMatches(matchId);
   }
 }

@@ -21,6 +21,7 @@ header {
       padding: 3px 10px;
       border-radius: 10px;
       margin: 0 7px;
+      margin-top: 10px;
       
       .nav-link {
         color: white;
@@ -28,6 +29,12 @@ header {
   
       .nav-link.active {
         color: $primary-color;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .nav-item {
+        margin-top: 0;
       }
     }
   }
