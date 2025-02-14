@@ -53,14 +53,29 @@ namespace AI.Football.Predictions.API.Controllers
             }
         }
 
+        [HttpGet("{id}/Statistics", Name = "GetMatchStatistics")]
+        [EndpointSummary("Gets match detailed statistics")]
+        public async Task<ActionResult<SportradarMatchStatisticsResponse>> GetMatchStatistics(int id)
+        {
+            try
+            {
+                var matchStatistics = await _sportradarService.GetMatchStatisticsById(id);
+                return Ok(matchStatistics);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
+            }
+        }
+
         [HttpGet("{id}/Head2head", Name = "GetH2hMatches")]
         [EndpointSummary("Gets head2head matches by matchId")]
         public async Task<ActionResult<SportradarHead2HeadResponse>> GetHead2HeadMatches(int id)
         {
             try
             {
-                var matchDetails = await _sportradarService.GetHead2HeadMatchesById(id);
-                return Ok(matchDetails);
+                var h2hMatches = await _sportradarService.GetHead2HeadMatchesById(id);
+                return Ok(h2hMatches);
             }
             catch (Exception ex)
             {
