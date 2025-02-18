@@ -81,4 +81,16 @@ export class MatchDetailsComponent implements OnInit {
     return date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + 
            date.getFullYear() + ' ' + ("00" + date.getHours()).slice(-2) + ":" + ("00" + date.getMinutes()).slice(-2);  
   }
+
+  get homeStats() {
+    return this.matchStatistics?.statistics?.filter(
+      s => s.competitorId === this.match?.game?.homeCompetitor?.id
+    ) || [];
+  }
+
+  get awayStats() {
+    return this.matchStatistics?.statistics?.filter(
+      s => s.competitorId === this.match?.game?.awayCompetitor?.id
+    ) || [];
+  }
 }

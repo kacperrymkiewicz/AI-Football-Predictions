@@ -51,12 +51,20 @@
       } @else {
         <div class="col-md-6">
           <div class="match-statistics">
-            @for (matchStatisticsItem of matchStatistics.statistics; track $index) {
-              <p>{{ matchStatisticsItem.name }}: {{ matchStatisticsItem.value }}</p>
-            }
-            @empty {
-              <p>Statystyki pojawią się po rozpoczęciu meczu</p>
-            }
+            <div class="row">
+              <div class="col-md-6">
+                <h3>Gospodarz</h3>
+                @for (homeStat of homeStats; track $index) {
+                  <p>{{ homeStat.name }}: {{ homeStat.value }}</p>
+                }
+              </div>
+              <div class="col-md-6">
+                <h3>Gość</h3>
+                @for (awayStat of awayStats; track $index) {
+                  <p>{{ awayStat.name }}: {{ awayStat.value }}</p>
+                }
+              </div>
+            </div>
           </div>
         </div>
       }
