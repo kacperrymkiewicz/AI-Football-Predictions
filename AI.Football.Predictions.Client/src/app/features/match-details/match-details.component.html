@@ -38,5 +38,28 @@
         </div>
       }
     </div>
+
+    <div class="row">
+      <h2>Statystyki</h2>
+      @if (loadingStateService.isLoading('matchStatistics')) {
+        <div class="loading-spinner">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <h3>Trwa wczytywanie statystyk...</h3>
+        </div>
+      } @else {
+        <div class="col-md-6">
+          <div class="match-statistics">
+            @for (matchStatisticsItem of matchStatistics.statistics; track $index) {
+              <p>{{ matchStatisticsItem.name }}: {{ matchStatisticsItem.value }}</p>
+            }
+            @empty {
+              <p>Statystyki pojawią się po rozpoczęciu meczu</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
   </div>
 </section>

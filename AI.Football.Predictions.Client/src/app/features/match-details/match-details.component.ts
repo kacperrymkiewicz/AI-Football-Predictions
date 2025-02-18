@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { SportradarHead2HeadResponse, SportradarMatchDetailsResponse } from '../../core/api-client/api-client';
+import { SportradarHead2HeadResponse, SportradarMatchDetailsResponse, SportradarMatchStatisticsResponse } from '../../core/api-client/api-client';
 import { MatchService } from '../../core/services/match.service';
 import { LoadingStateService } from '../../core/services/loading-state.service';
 import { ActivatedRoute } from '@angular/router';
@@ -17,10 +17,12 @@ export class MatchDetailsComponent implements OnInit {
   protected route: ActivatedRoute = inject(ActivatedRoute);
 
   match!: SportradarMatchDetailsResponse;
+  matchStatistics!: SportradarMatchStatisticsResponse;
   matchesH2h!: SportradarHead2HeadResponse;
 
   ngOnInit(): void {
     this.fetchMatchDetails();
+    this.fetchMatchStatistics();
     this.fetchH2hMatches();
   }
 
@@ -37,6 +39,23 @@ export class MatchDetailsComponent implements OnInit {
       },
       complete: () => {
         this.loadingStateService.setState("matchDetails", false);
+      },
+    });
+  }
+
+  fetchMatchStatistics() {
+    const matchId = Number(this.route.snapshot.paramMap.get("id"));
+    this.loadingStateService.setState("matchStatistics", true);
+
+    this.matchService.getMatchStatistics(matchId).subscribe({
+      next: (response) => {
+        this.matchStatistics = response;
+      },
+      error: () => {
+        this.loadingStateService.setState("matchStatistics", false, true);
+      },
+      complete: () => {
+        this.loadingStateService.setState("matchStatistics", false);
       },
     });
   }
