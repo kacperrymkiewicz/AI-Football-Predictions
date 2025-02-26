@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AI.Football.Predictions.API
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AI.Football.Predictions.Integrations", "AI.Football.Predictions.Integrations\AI.Football.Predictions.Integrations.csproj", "{AE2FC971-EF47-4209-8267-DDD980401722}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI.Football.Predictions.ML", "AI.Football.Predictions.ML\AI.Football.Predictions.ML.csproj", "{4F3D9209-E0EC-44D8-AFF4-AB08C2285119}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AI.Football.Predictions.ML", "AI.Football.Predictions.ML\AI.Football.Predictions.ML.csproj", "{4F3D9209-E0EC-44D8-AFF4-AB08C2285119}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

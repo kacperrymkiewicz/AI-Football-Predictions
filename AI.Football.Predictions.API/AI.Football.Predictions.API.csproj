@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AI.Football.Predictions.Integrations\AI.Football.Predictions.Integrations.csproj" />
+    <ProjectReference Include="..\AI.Football.Predictions.ML\AI.Football.Predictions.ML.csproj" />
   </ItemGroup>
 
 </Project>

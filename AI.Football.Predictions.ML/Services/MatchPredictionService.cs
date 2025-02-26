@@ -9,15 +9,23 @@ using System.Threading.Tasks;
 
 namespace AI.Football.Predictions.ML.Services
 {
-    public class MatchPredictionService
+    public class MatchPredictionService : IMatchPredictionService
     {
         private readonly MLContext _mlContext;
         private ITransformer _model;
-        private readonly string _modelPath = "Models/MatchPredictionModel.zip";
+        private readonly string _modelPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Models", "MatchPredictionModel.zip");
 
         public MatchPredictionService()
         {
             _mlContext = new MLContext(seed: 0);
+            if (File.Exists(_modelPath))
+            {
+                _model = _mlContext.Model.Load(_modelPath, out _);
+            }
+            else
+            {
+                throw new Exception($"Model was not found. Check if the file exists: {_modelPath}");
+            }
         }
 
         public void Train(string dataPath)
@@ -46,10 +54,9 @@ namespace AI.Football.Predictions.ML.Services
 
         public MatchPrediction Predict(MatchData matchData)
         {
-            if (_model == null && File.Exists(_modelPath))
-            {
-                _model = _mlContext.Model.Load(_modelPath, out _);
-            }
+            if (_model == null)
+                throw new InvalidOperationException("Model was not loaded!");
+
 
             var predictionEngine = _mlContext.Model.CreatePredictionEngine<MatchData, MatchPrediction>(_model);
             return predictionEngine.Predict(matchData);

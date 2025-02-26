@@ -13,7 +13,7 @@ public class Program
 
         if (File.Exists(dataPath))
         {
-            service.Train(dataPath);
+            //service.Train(dataPath);
             Console.WriteLine("Model trained successfully!");
         }
         else
