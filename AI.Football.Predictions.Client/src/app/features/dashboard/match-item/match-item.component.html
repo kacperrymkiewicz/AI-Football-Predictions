@@ -11,5 +11,15 @@
         <div class="away-team team"><img [src]="getTeamLogoUrl(match.awayCompetitor!.id!)" [alt]="match.awayCompetitor?.name" loading="lazy"> {{ match.awayCompetitor?.name }}</div>
       </div>
     </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="match-details">
+          <p>{{ match.statusText }} @if(match.statusGroup == 2) { - Start: {{ match.startTime! | matchDate }} }</p>
+          @if (match.statusGroup == 3) {
+            <p>{{ match.gameTimeDisplay }}, Wynik: {{ match.homeCompetitor?.score }} - {{ match.awayCompetitor?.score }}</p>
+          }
+        </div>
+      </div>
+    </div>
   </div>
 </a>

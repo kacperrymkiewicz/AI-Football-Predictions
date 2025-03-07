@@ -3,11 +3,12 @@ import { Game } from '../../../core/api-client/api-client';
 import { environment } from '../../../../environments/environment';
 import { RouterLink } from '@angular/router';
 import { slugify } from '../../../core/utils/slugify';
+import { MatchDatePipe } from "../../../core/pipes/match-date.pipe";
 
 @Component({
   selector: 'app-match-item',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, MatchDatePipe],
   templateUrl: './match-item.component.html',
   styleUrl: './match-item.component.scss'
 })
