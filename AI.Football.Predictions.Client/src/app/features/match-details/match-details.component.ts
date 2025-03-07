@@ -3,11 +3,12 @@ import { SportradarHead2HeadResponse, SportradarMatchDetailsResponse, Sportradar
 import { MatchService } from '../../core/services/match.service';
 import { LoadingStateService } from '../../core/services/loading-state.service';
 import { ActivatedRoute } from '@angular/router';
+import { MatchDatePipe } from "../../core/pipes/match-date.pipe";
 
 @Component({
   selector: 'app-match-details',
   standalone: true,
-  imports: [],
+  imports: [MatchDatePipe],
   templateUrl: './match-details.component.html',
   styleUrl: './match-details.component.scss'
 })
@@ -75,11 +76,6 @@ export class MatchDetailsComponent implements OnInit {
         this.loadingStateService.setState("matchesH2h", false);
       },
     });
-  }
-
-  formatDate(date: Date) {
-    return date.getDate().toString().padStart(2, '0') + '.' + (date.getMonth() + 1).toString().padStart(2, '0') + '.' + 
-           date.getFullYear() + ' ' + ("00" + date.getHours()).slice(-2) + ":" + ("00" + date.getMinutes()).slice(-2);  
   }
 
   get homeStats() {

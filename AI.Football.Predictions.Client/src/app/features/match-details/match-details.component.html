@@ -12,7 +12,7 @@
         <h1>{{ match.game?.homeCompetitor?.name }} - {{ match.game?.awayCompetitor?.name }}</h1>
         <div class="col-md-6">
           <div class="match-info">
-            <p>{{ formatDate(match.game?.startTime!) }}</p>
+            <p>{{ match.game?.startTime! | matchDate }}</p>
             <p>{{ match.game?.statusText }}</p>
             <p>{{ match.game?.homeCompetitor?.score }} - {{ match.game?.awayCompetitor?.score }}</p>
           </div>
@@ -32,7 +32,7 @@
         <div class="col-md-6">
           <div class="matches-h2h">
             @for (matchH2h of matchesH2h.game?.h2hGames; track $index) {
-              <p>{{ matchH2h.competitionDisplayName }}: {{ matchH2h.homeCompetitor?.score }} - {{ matchH2h.awayCompetitor?.score }} {{ formatDate(matchH2h.startTime!) }}</p>
+              <p>{{ matchH2h.competitionDisplayName }}: {{ matchH2h.homeCompetitor?.score }} - {{ matchH2h.awayCompetitor?.score }} {{ matchH2h.startTime! | matchDate }}</p>
             }
           </div>
         </div>
