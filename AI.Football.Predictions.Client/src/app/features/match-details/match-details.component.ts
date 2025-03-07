@@ -4,6 +4,7 @@ import { MatchService } from '../../core/services/match.service';
 import { LoadingStateService } from '../../core/services/loading-state.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatchDatePipe } from "../../core/pipes/match-date.pipe";
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-match-details',
@@ -76,6 +77,14 @@ export class MatchDetailsComponent implements OnInit {
         this.loadingStateService.setState("matchesH2h", false);
       },
     });
+  }
+
+  getTeamLogoUrl(id: number, size: number = 20) {
+    return `${environment.imageCacheUrl}/f_png,w_${size},h_${size},c_limit,q_auto:eco,dpr_2,d_Competitors:default1.png/v1/Competitors/${id}`  
+  }
+  
+  getCompetitionLogoUrl(id: number) {
+    return `${environment.imageCacheUrl}/f_png,w_10,h_10,c_limit,q_auto:eco,dpr_2,d_Countries:Round:2.png/v5/Competitions/${id}`  
   }
 
   get homeStats() {
