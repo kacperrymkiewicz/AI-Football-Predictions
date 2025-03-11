@@ -36,7 +36,9 @@
                         }
                         @else {
                           <span class="match-header__start-time">{{ match.game?.startTime! | matchDate:'time' }}</span>
-                          <span class="match-header__countdown-timer">00:30:10</span>
+                          <span class="match-header__countdown-timer">
+                            <app-match-countdown [matchDate]="match!.game?.startTime!"></app-match-countdown>
+                          </span>
                         }
                       </div>
                     </div>

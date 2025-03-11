@@ -5,11 +5,12 @@ import { LoadingStateService } from '../../core/services/loading-state.service';
 import { ActivatedRoute } from '@angular/router';
 import { MatchDatePipe } from "../../core/pipes/match-date.pipe";
 import { environment } from '../../../environments/environment';
+import { MatchCountdownComponent } from "./match-countdown/match-countdown.component";
 
 @Component({
   selector: 'app-match-details',
   standalone: true,
-  imports: [MatchDatePipe],
+  imports: [MatchDatePipe, MatchCountdownComponent],
   templateUrl: './match-details.component.html',
   styleUrl: './match-details.component.scss'
 })
