@@ -98,4 +98,28 @@ export class MatchDetailsComponent implements OnInit {
       s => s.competitorId === this.match?.game?.awayCompetitor?.id
     ) || [];
   }
+
+  get homeWins(): number {
+    const homeTeamId = this.match?.game?.homeCompetitor?.id;
+    return this.matchesH2h.game?.h2hGames?.filter(match =>
+      (match.homeCompetitor?.id === homeTeamId && match.homeCompetitor?.score! > match.awayCompetitor?.score!) ||
+      (match.awayCompetitor?.id === homeTeamId && match.awayCompetitor?.score! > match.homeCompetitor?.score!)
+    ).length ?? 0;
+  }
+  
+  get awayWins(): number {
+    const awayTeamId = this.match?.game?.awayCompetitor?.id;
+    return this.matchesH2h.game?.h2hGames?.filter(match =>
+      (match.homeCompetitor?.id === awayTeamId && match.homeCompetitor?.score! > match.awayCompetitor?.score!) ||
+      (match.awayCompetitor?.id === awayTeamId && match.awayCompetitor?.score! > match.homeCompetitor?.score!)
+    ).length ?? 0;
+  }
+  
+  get draws(): number {
+    return this.matchesH2h.game?.h2hGames?.filter(match =>
+      (match.homeCompetitor?.id === this.match?.game?.homeCompetitor?.id || 
+       match.awayCompetitor?.id === this.match?.game?.homeCompetitor?.id) &&
+      match.homeCompetitor?.score === match.awayCompetitor?.score
+    ).length ?? 0;
+  }
 }

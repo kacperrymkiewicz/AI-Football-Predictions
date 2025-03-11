@@ -30,8 +30,14 @@
                     </div>
                     <div class="col-md-2">
                       <div class="match-header__score">
-                        <span class="match-header__start-time">{{ match.game?.startTime! | matchDate:'time' }}</span>
-                        <span class="match-header__countdown-timer">00:30:10</span>
+                        @if (match.game?.statusGroup == 3 || match.game?.statusGroup == 4) {
+                          <span class="match-header__result">{{ match.game?.homeCompetitor?.score }} - {{ match.game?.awayCompetitor?.score }}</span>
+                          <span class="match-header__statusText">{{ match.game?.statusText }}</span>
+                        }
+                        @else {
+                          <span class="match-header__start-time">{{ match.game?.startTime! | matchDate:'time' }}</span>
+                          <span class="match-header__countdown-timer">00:30:10</span>
+                        }
                       </div>
                     </div>
                     <div class="col-md-5">
@@ -49,6 +55,7 @@
                   <div class="match-info">
                     <p>{{ match.game?.startTime! | matchDate }}</p>
                     <p>{{ match.game?.statusText }}</p>
+                    <p>{{ match.game?.statusGroup }}</p>
                     @if (match.game?.statusGroup == 3) {
                       <p>{{ match.game?.homeCompetitor?.score }} - {{ match.game?.awayCompetitor?.score }}</p>
                     }
@@ -78,15 +85,15 @@
                   </div>
                   <div class="matches-h2h__statistics-stats">
                     <div class="matches-h2h__statistics-home-wins">
-                      <span class="matches-h2h__statistics-home-wins-counter">5</span>
+                      <span class="matches-h2h__statistics-home-wins-counter">{{ homeWins }}</span>
                       <span class="matches-h2h__statistics-label">Zwycięstwa</span>
                     </div>
                     <div class="matches-h2h__statistics-draws">
-                      <span class="matches-h2h__statistics-draws-counter">5</span>
+                      <span class="matches-h2h__statistics-draws-counter">{{ draws }}</span>
                       <span class="matches-h2h__statistics-label">Remisy</span>
                     </div>
                     <div class="matches-h2h__statistics-away-wins">
-                      <span class="matches-h2h__statistics-away-wins-counter">5</span>
+                      <span class="matches-h2h__statistics-away-wins-counter">{{ awayWins }}</span>
                       <span class="matches-h2h__statistics-label">Zwycięstwa</span>
                     </div>
                   </div>

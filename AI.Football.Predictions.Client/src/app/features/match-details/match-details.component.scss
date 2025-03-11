@@ -65,12 +65,12 @@
       height: 100%;
       flex-direction: column;
 
-      .match-header__start-time {
+      .match-header__start-time, .match-header__result {
         font-size: 30px;
         font-weight: 700;
       }
 
-      .match-header__countdown-timer {
+      .match-header__countdown-timer, .match-header__statusText {
         font-size: 16px;
         color: #9f9f9f;
       }
