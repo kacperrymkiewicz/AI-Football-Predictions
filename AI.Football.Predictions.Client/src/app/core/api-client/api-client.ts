@@ -354,6 +354,62 @@ export class Client {
         }
         return _observableOf(null as any);
     }
+
+    /**
+     * @param body (optional) 
+     * @return OK
+     */
+    predict_match_result(body: MatchData | undefined): Observable<MatchPrediction> {
+        let url_ = this.baseUrl + "/api/Matches/Predict";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPredict_match_result(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPredict_match_result(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MatchPrediction>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MatchPrediction>;
+        }));
+    }
+
+    protected processPredict_match_result(response: HttpResponseBase): Observable<MatchPrediction> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MatchPrediction.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 export class ActionButton implements IActionButton {
@@ -1072,6 +1128,146 @@ export interface ICountry {
     imageVersion?: number;
 }
 
+export class Event implements IEvent {
+    competitorId?: number;
+    statusId?: number;
+    stageId?: number;
+    order?: number;
+    num?: number;
+    gameTime?: number;
+    addedTime?: number;
+    gameTimeDisplay?: string | undefined;
+    gameTimeAndStatusDisplayType?: number;
+    playerId?: number;
+    isMajor?: boolean;
+    eventType?: EventType;
+    extraPlayers?: number[] | undefined;
+
+    constructor(data?: IEvent) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.competitorId = _data["competitorId"];
+            this.statusId = _data["statusId"];
+            this.stageId = _data["stageId"];
+            this.order = _data["order"];
+            this.num = _data["num"];
+            this.gameTime = _data["gameTime"];
+            this.addedTime = _data["addedTime"];
+            this.gameTimeDisplay = _data["gameTimeDisplay"];
+            this.gameTimeAndStatusDisplayType = _data["gameTimeAndStatusDisplayType"];
+            this.playerId = _data["playerId"];
+            this.isMajor = _data["isMajor"];
+            this.eventType = _data["eventType"] ? EventType.fromJS(_data["eventType"]) : <any>undefined;
+            if (Array.isArray(_data["extraPlayers"])) {
+                this.extraPlayers = [] as any;
+                for (let item of _data["extraPlayers"])
+                    this.extraPlayers!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): Event {
+        data = typeof data === 'object' ? data : {};
+        let result = new Event();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["competitorId"] = this.competitorId;
+        data["statusId"] = this.statusId;
+        data["stageId"] = this.stageId;
+        data["order"] = this.order;
+        data["num"] = this.num;
+        data["gameTime"] = this.gameTime;
+        data["addedTime"] = this.addedTime;
+        data["gameTimeDisplay"] = this.gameTimeDisplay;
+        data["gameTimeAndStatusDisplayType"] = this.gameTimeAndStatusDisplayType;
+        data["playerId"] = this.playerId;
+        data["isMajor"] = this.isMajor;
+        data["eventType"] = this.eventType ? this.eventType.toJSON() : <any>undefined;
+        if (Array.isArray(this.extraPlayers)) {
+            data["extraPlayers"] = [];
+            for (let item of this.extraPlayers)
+                data["extraPlayers"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IEvent {
+    competitorId?: number;
+    statusId?: number;
+    stageId?: number;
+    order?: number;
+    num?: number;
+    gameTime?: number;
+    addedTime?: number;
+    gameTimeDisplay?: string | undefined;
+    gameTimeAndStatusDisplayType?: number;
+    playerId?: number;
+    isMajor?: boolean;
+    eventType?: EventType;
+    extraPlayers?: number[] | undefined;
+}
+
+export class EventType implements IEventType {
+    id?: number;
+    name?: string | undefined;
+    subTypeId?: number;
+    subTypeName?: string | undefined;
+
+    constructor(data?: IEventType) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.subTypeId = _data["subTypeId"];
+            this.subTypeName = _data["subTypeName"];
+        }
+    }
+
+    static fromJS(data: any): EventType {
+        data = typeof data === 'object' ? data : {};
+        let result = new EventType();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["subTypeId"] = this.subTypeId;
+        data["subTypeName"] = this.subTypeName;
+        return data;
+    }
+}
+
+export interface IEventType {
+    id?: number;
+    name?: string | undefined;
+    subTypeId?: number;
+    subTypeName?: string | undefined;
+}
+
 export class ExtraDatum implements IExtraDatum {
     num?: number;
     text?: string | undefined;
@@ -1150,6 +1346,8 @@ export class Game implements IGame {
     homeAwayTeamOrder?: number;
     hasNews?: boolean;
     showCountdown?: boolean | undefined;
+    events?: Event[] | undefined;
+    venue?: Venue;
 
     constructor(data?: IGame) {
         if (data) {
@@ -1203,6 +1401,12 @@ export class Game implements IGame {
             this.homeAwayTeamOrder = _data["homeAwayTeamOrder"];
             this.hasNews = _data["hasNews"];
             this.showCountdown = _data["showCountdown"];
+            if (Array.isArray(_data["events"])) {
+                this.events = [] as any;
+                for (let item of _data["events"])
+                    this.events!.push(Event.fromJS(item));
+            }
+            this.venue = _data["venue"] ? Venue.fromJS(_data["venue"]) : <any>undefined;
         }
     }
 
@@ -1256,6 +1460,12 @@ export class Game implements IGame {
         data["homeAwayTeamOrder"] = this.homeAwayTeamOrder;
         data["hasNews"] = this.hasNews;
         data["showCountdown"] = this.showCountdown;
+        if (Array.isArray(this.events)) {
+            data["events"] = [];
+            for (let item of this.events)
+                data["events"].push(item.toJSON());
+        }
+        data["venue"] = this.venue ? this.venue.toJSON() : <any>undefined;
         return data;
     }
 }
@@ -1298,6 +1508,8 @@ export interface IGame {
     homeAwayTeamOrder?: number;
     hasNews?: boolean;
     showCountdown?: boolean | undefined;
+    events?: Event[] | undefined;
+    venue?: Venue;
 }
 
 export class General implements IGeneral {
@@ -1738,6 +1950,134 @@ export interface ILineType {
     name?: string | undefined;
     title?: string | undefined;
     internalOptionType?: number;
+}
+
+export class MatchData implements IMatchData {
+    homeGoalsAvg?: number;
+    awayGoalsAvg?: number;
+    homePossessionAvg?: number;
+    awayPossessionAvg?: number;
+    homeShotsAvg?: number;
+    awayShotsAvg?: number;
+    homeWinRate?: number;
+    awayWinRate?: number;
+    h2HHomeWins?: number;
+    h2HAwayWins?: number;
+    h2HDraws?: number;
+    matchResult?: number;
+
+    constructor(data?: IMatchData) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.homeGoalsAvg = _data["homeGoalsAvg"];
+            this.awayGoalsAvg = _data["awayGoalsAvg"];
+            this.homePossessionAvg = _data["homePossessionAvg"];
+            this.awayPossessionAvg = _data["awayPossessionAvg"];
+            this.homeShotsAvg = _data["homeShotsAvg"];
+            this.awayShotsAvg = _data["awayShotsAvg"];
+            this.homeWinRate = _data["homeWinRate"];
+            this.awayWinRate = _data["awayWinRate"];
+            this.h2HHomeWins = _data["h2HHomeWins"];
+            this.h2HAwayWins = _data["h2HAwayWins"];
+            this.h2HDraws = _data["h2HDraws"];
+            this.matchResult = _data["matchResult"];
+        }
+    }
+
+    static fromJS(data: any): MatchData {
+        data = typeof data === 'object' ? data : {};
+        let result = new MatchData();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["homeGoalsAvg"] = this.homeGoalsAvg;
+        data["awayGoalsAvg"] = this.awayGoalsAvg;
+        data["homePossessionAvg"] = this.homePossessionAvg;
+        data["awayPossessionAvg"] = this.awayPossessionAvg;
+        data["homeShotsAvg"] = this.homeShotsAvg;
+        data["awayShotsAvg"] = this.awayShotsAvg;
+        data["homeWinRate"] = this.homeWinRate;
+        data["awayWinRate"] = this.awayWinRate;
+        data["h2HHomeWins"] = this.h2HHomeWins;
+        data["h2HAwayWins"] = this.h2HAwayWins;
+        data["h2HDraws"] = this.h2HDraws;
+        data["matchResult"] = this.matchResult;
+        return data;
+    }
+}
+
+export interface IMatchData {
+    homeGoalsAvg?: number;
+    awayGoalsAvg?: number;
+    homePossessionAvg?: number;
+    awayPossessionAvg?: number;
+    homeShotsAvg?: number;
+    awayShotsAvg?: number;
+    homeWinRate?: number;
+    awayWinRate?: number;
+    h2HHomeWins?: number;
+    h2HAwayWins?: number;
+    h2HDraws?: number;
+    matchResult?: number;
+}
+
+export class MatchPrediction implements IMatchPrediction {
+    predictedResult?: number;
+    score?: number[] | undefined;
+
+    constructor(data?: IMatchPrediction) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.predictedResult = _data["predictedResult"];
+            if (Array.isArray(_data["score"])) {
+                this.score = [] as any;
+                for (let item of _data["score"])
+                    this.score!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): MatchPrediction {
+        data = typeof data === 'object' ? data : {};
+        let result = new MatchPrediction();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["predictedResult"] = this.predictedResult;
+        if (Array.isArray(this.score)) {
+            data["score"] = [];
+            for (let item of this.score)
+                data["score"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IMatchPrediction {
+    predictedResult?: number;
+    score?: number[] | undefined;
 }
 
 export class Odds implements IOdds {
@@ -2954,6 +3294,58 @@ export interface IUserRegisterDto {
     lastName?: string | undefined;
     emailAddress?: string | undefined;
     password?: string | undefined;
+}
+
+export class Venue implements IVenue {
+    id?: number;
+    name?: string | undefined;
+    shortName?: string | undefined;
+    capacity?: number;
+    attendance?: number;
+
+    constructor(data?: IVenue) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.shortName = _data["shortName"];
+            this.capacity = _data["capacity"];
+            this.attendance = _data["attendance"];
+        }
+    }
+
+    static fromJS(data: any): Venue {
+        data = typeof data === 'object' ? data : {};
+        let result = new Venue();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["shortName"] = this.shortName;
+        data["capacity"] = this.capacity;
+        data["attendance"] = this.attendance;
+        return data;
+    }
+}
+
+export interface IVenue {
+    id?: number;
+    name?: string | undefined;
+    shortName?: string | undefined;
+    capacity?: number;
+    attendance?: number;
 }
 
 export class WastedTime implements IWastedTime {

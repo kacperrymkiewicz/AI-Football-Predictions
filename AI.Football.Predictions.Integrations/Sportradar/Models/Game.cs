@@ -44,6 +44,8 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Models
         public int HomeAwayTeamOrder { get; set; }
         public bool HasNews { get; set; }
         public bool? ShowCountdown { get; set; }
+        public List<Event> Events { get; set; }
+        public Venue Venue { get; set; }
     }
 
 }

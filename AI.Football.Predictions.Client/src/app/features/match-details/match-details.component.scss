@@ -27,6 +27,10 @@
       i {
         margin-right: 3px;
       }
+
+      span {
+        margin: 0 10px;
+      }
     }
 
     .match-header__teams {
@@ -157,34 +161,45 @@
         color: #9f9f9f;
       }
 
-      .matches-h2h__result {
-        display: flex;
-        justify-content: center;
-        font-size: 14px;
-        font-weight: 700;
+      a {
+        text-decoration: none;
+        color: inherit;
 
-        .matches-h2h__result-score {
-          margin: 0 16px;
-        }
-
-        .matches-h2h__result-team-home {
+        .matches-h2h__result {
           display: flex;
-          align-items: center;
           justify-content: center;
-          img {
-            margin-left: 8px;
+          align-items: center;
+          font-size: 14px;
+          font-weight: 700;
+  
+          .matches-h2h__result-score {
+            margin: 0 16px;
           }
-        }
-
-        .matches-h2h__result-team-away {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          img {
-            margin-right: 8px;
+  
+          .matches-h2h__result-team-home {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            img {
+              margin-left: 8px;
+            }
+          }
+  
+          .matches-h2h__result-team-away {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            img {
+              margin-right: 8px;
+            }
           }
         }
       }
+
+      a:hover {
+        opacity: 0.7;
+      }
+
 
       ul {
         list-style: none;

@@ -2,15 +2,16 @@ import { Component, inject, OnInit } from '@angular/core';
 import { SportradarHead2HeadResponse, SportradarMatchDetailsResponse, SportradarMatchStatisticsResponse } from '../../core/api-client/api-client';
 import { MatchService } from '../../core/services/match.service';
 import { LoadingStateService } from '../../core/services/loading-state.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatchDatePipe } from "../../core/pipes/match-date.pipe";
 import { environment } from '../../../environments/environment';
 import { MatchCountdownComponent } from "./match-countdown/match-countdown.component";
+import { slugify } from '../../core/utils/slugify';
 
 @Component({
   selector: 'app-match-details',
   standalone: true,
-  imports: [MatchDatePipe, MatchCountdownComponent],
+  imports: [MatchDatePipe, MatchCountdownComponent, RouterLink],
   templateUrl: './match-details.component.html',
   styleUrl: './match-details.component.scss'
 })
@@ -24,9 +25,11 @@ export class MatchDetailsComponent implements OnInit {
   matchesH2h!: SportradarHead2HeadResponse;
 
   ngOnInit(): void {
-    this.fetchMatchDetails();
-    this.fetchMatchStatistics();
-    this.fetchH2hMatches();
+    this.route.paramMap.subscribe(params => {
+      this.fetchMatchDetails();
+      this.fetchMatchStatistics();
+      this.fetchH2hMatches();
+    });
   }
 
   fetchMatchDetails() {
@@ -86,6 +89,10 @@ export class MatchDetailsComponent implements OnInit {
   
   getCompetitionLogoUrl(id: number) {
     return `${environment.imageCacheUrl}/f_png,w_10,h_10,c_limit,q_auto:eco,dpr_2,d_Countries:Round:2.png/v5/Competitions/${id}`  
+  }
+
+  slugify(text: string): string {
+    return slugify(text);
   }
 
   get homeStats() {

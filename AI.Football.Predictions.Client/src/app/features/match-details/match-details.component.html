@@ -19,6 +19,9 @@
                 </div>
                 <div class="match-header__date">
                   <span><i class="bi bi-calendar-event"></i> {{ match.game?.startTime! | matchDate:'fullDateTime' }}</span>
+                  @if (match.game?.venue) {
+                    <span><i class="bi bi-geo"></i> {{ match.game?.venue?.name }}</span>
+                  }
                 </div>
                 <div class="match-header__teams">
                   <div class="row">
@@ -114,17 +117,19 @@
                             <img [src]="getCompetitionLogoUrl(matchH2h.competitionId!)" [alt]="matchH2h.competitionDisplayName">
                           </span>
                         </div>
-                        <div class="matches-h2h__result">
-                          <span class="matches-h2h__result-team-home">
-                            {{ matchH2h.homeCompetitor?.name }}
-                            <img [src]="getTeamLogoUrl(matchH2h.homeCompetitor!.id!, 12)" [alt]="matchH2h.homeCompetitor?.name">
-                          </span> 
-                          <span class="matches-h2h__result-score">{{ matchH2h.homeCompetitor?.score }} - {{ matchH2h.awayCompetitor?.score }}</span> 
-                          <span class="matches-h2h__result-team-away">
-                            <img [src]="getTeamLogoUrl(matchH2h.awayCompetitor!.id!, 12)" [alt]="matchH2h.awayCompetitor?.name">
-                            {{ matchH2h.awayCompetitor?.name }}
-                          </span>
-                        </div>
+                        <a [routerLink]="['/match', matchH2h.id, slugify(matchH2h.homeCompetitor!.name + '-' + matchH2h.awayCompetitor!.name)]">
+                          <div class="matches-h2h__result">
+                            <span class="matches-h2h__result-team-home">
+                              {{ matchH2h.homeCompetitor?.name }}
+                              <img [src]="getTeamLogoUrl(matchH2h.homeCompetitor!.id!, 12)" [alt]="matchH2h.homeCompetitor?.name">
+                            </span> 
+                            <span class="matches-h2h__result-score">{{ matchH2h.homeCompetitor?.score }} - {{ matchH2h.awayCompetitor?.score }}</span> 
+                            <span class="matches-h2h__result-team-away">
+                              <img [src]="getTeamLogoUrl(matchH2h.awayCompetitor!.id!, 12)" [alt]="matchH2h.awayCompetitor?.name">
+                              {{ matchH2h.awayCompetitor?.name }}
+                            </span>
+                          </div>
+                        </a>
                       </li>
                     }
                   </ul>
