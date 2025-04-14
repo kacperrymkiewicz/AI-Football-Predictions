@@ -136,6 +136,10 @@ header::before {
   cursor: pointer;
 }
 
+.profile .dropdown-menu li.active {
+  color: $primary-color;
+}
+
 .profile .dropdown-menu li i {
   margin-right: 3px;
   color: $primary-color;

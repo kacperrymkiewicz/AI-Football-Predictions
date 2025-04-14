@@ -53,11 +53,11 @@
             @if (isDropdownMenuOpen()) {
               <div class="dropdown-menu">
                 <ul>
-                  <li routerLink="/account">
+                  <li routerLink="/account" routerLinkActive="active">
                     <i class="bi bi-person-fill"></i>
                     <span>Mój profil</span>
                   </li>
-                  <li routerLink="/account/followed-teams">
+                  <li routerLink="/account/followed-teams" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
                     <i class="bi bi-star-fill"></i>
                     <span>Obserwowane drużyny</span>
                   </li>
