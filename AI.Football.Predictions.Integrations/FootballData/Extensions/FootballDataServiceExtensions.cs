@@ -28,7 +28,7 @@ namespace AI.Football.Predictions.Integrations.FootballData.Extensions
                 client.DefaultRequestHeaders.Add("X-Auth-Token", footballDataSettings.ApiKey);
             });
 
-            services.AddScoped<IFootballDataService, FootballDataService>();
+            services.AddScoped<IFootballDataApiService, FootballDataApiService>();
 
             return services;
         }

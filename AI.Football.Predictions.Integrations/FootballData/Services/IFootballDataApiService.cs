@@ -6,7 +6,7 @@ using AI.Football.Predictions.Integrations.FootballData.Models;
 
 namespace AI.Football.Predictions.Integrations.FootballData.Services
 {
-    public interface IFootballDataService
+    public interface IFootballDataApiService
     {
         Task<List<Match>> GetLiveMatchesAsync();
     }

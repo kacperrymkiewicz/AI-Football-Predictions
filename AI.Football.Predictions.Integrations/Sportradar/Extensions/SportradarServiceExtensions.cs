@@ -27,7 +27,7 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Extensions
                 client.DefaultRequestHeaders.Add("X-Auth-Token", sportradarSettings.ApiKey);
             });
 
-            services.AddScoped<ISportradarService, SportradarService>();
+            services.AddScoped<ISportradarApiService, SportradarApiService>();
 
             return services;
         }

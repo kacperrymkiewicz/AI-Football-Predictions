@@ -7,13 +7,33 @@ using AI.Football.Predictions.Integrations.Sportradar.Models;
 
 namespace AI.Football.Predictions.Integrations.Sportradar.Services
 {
-    public class SportradarService : ISportradarService
+    public class SportradarApiService : ISportradarApiService
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly HttpClient _client;
 
-        public SportradarService(IHttpClientFactory httpClientFactory)
+        public SportradarApiService(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
+            _client = httpClientFactory.CreateClient("Sportradar");
+        }
+
+        public async Task<SportradarResponse> GetMatches(DateTime startDate, DateTime endDate)
+        {
+            var dateFrom = startDate.ToString("dd'/'MM'/'yyyy", System.Globalization.CultureInfo.InvariantCulture);
+            var dateTo = endDate.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+            var response = await _client.GetAsync($"web/games/myscores/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&competitions=572,11,25,7,156,153,8268,573,332&startDate={dateFrom}&endDate={dateTo}&showOdds=true&topBookmaker=151");
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("Error fetching matches");
+
+            var content = await response.Content.ReadAsStringAsync();
+            var deserializedResponse = JsonSerializer.Deserialize<SportradarResponse>(content, new JsonSerializerOptions {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return deserializedResponse!;
         }
 
         public async Task<SportradarResponse> GetLiveMatchesAsync()

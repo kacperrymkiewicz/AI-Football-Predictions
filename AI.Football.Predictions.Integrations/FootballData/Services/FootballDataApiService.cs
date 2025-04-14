@@ -7,11 +7,11 @@ using AI.Football.Predictions.Integrations.FootballData.Models;
 
 namespace AI.Football.Predictions.Integrations.FootballData.Services
 {
-    public class FootballDataService : IFootballDataService
+    public class FootballDataApiService : IFootballDataApiService
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public FootballDataService(IHttpClientFactory httpClientFactory)
+        public FootballDataApiService(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
         }

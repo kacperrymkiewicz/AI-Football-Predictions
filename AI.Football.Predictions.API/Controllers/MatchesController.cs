@@ -16,16 +16,31 @@ namespace AI.Football.Predictions.API.Controllers
     [Route("api/[controller]")]
     public class MatchesController : ControllerBase
     {
-        private readonly IFootballDataService _footballDataService;
-        private readonly ISportradarService _sportradarService;
+        private readonly IFootballDataApiService _footballDataService;
+        private readonly ISportradarApiService _sportradarService;
         private readonly IMatchPredictionService _predictionService;
 
 
-        public MatchesController(IFootballDataService footballDataService, ISportradarService sportradarService, IMatchPredictionService predictionService)
+        public MatchesController(IFootballDataApiService footballDataService, ISportradarApiService sportradarService, IMatchPredictionService predictionService)
         {
             _footballDataService = footballDataService;
             _sportradarService = sportradarService;
             _predictionService = predictionService;
+        }
+
+        [HttpGet(Name = "GetMatches")]
+        [EndpointSummary("Gets the list of football matches")]
+        public async Task<ActionResult<SportradarResponse>> GetMatches([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            try
+            {
+                var matches = await _sportradarService.GetMatches(startDate, endDate);
+                return Ok(matches);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = ex.Message });
+            }
         }
 
         [HttpGet("Live", Name = "GetLiveMatches")]
