@@ -11,9 +11,15 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav ms-auto">
+        <ul class="navbar-nav ms-auto me-auto">
           <li class="nav-item">
             <button class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Mecze na żywo</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" routerLink="/teams" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Zespoły</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link" routerLink="/players" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Zawodnicy</button>
           </li>
           @if (!user) {
             <li class="nav-item">
