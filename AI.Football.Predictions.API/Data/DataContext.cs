@@ -24,5 +24,6 @@ namespace AI.Football.Predictions.API.Data
 
         public DbSet<User> Users => Set<User>();
         public DbSet<MatchTrainingData> TrainingData => Set<MatchTrainingData>();
+        public DbSet<HistoricalMatch> HistoricalMatches => Set<HistoricalMatch>();
     }
 }

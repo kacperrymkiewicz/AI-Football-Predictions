@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AI.Football.Predictions.API.Data;
+using AI.Football.Predictions.API.Helpers;
 using AI.Football.Predictions.API.Models;
+using AI.Football.Predictions.Integrations.FootballData.Models;
 using AI.Football.Predictions.Integrations.Sportradar.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,8 +24,8 @@ namespace AI.Football.Predictions.API.Services
 
         public async Task ProcessAndSaveMatchDataAsync()
         {
-            var trainingDataList = new List<MatchTrainingData>();
-            await _context.Database.ExecuteSqlRawAsync("TRUNCATE trainingdata");
+            var trainingDataList = new List<HistoricalMatch>();
+            // await _context.Database.ExecuteSqlRawAsync("TRUNCATE trainingdata");
 
             var endDate = DateTime.UtcNow;
             var startDate = endDate.AddYears(-1);
@@ -35,21 +37,44 @@ namespace AI.Football.Predictions.API.Services
 
                 matches.Games.ForEach(match => 
                 {
-                    var trainingData = new MatchTrainingData 
+                    var historicalMatch = new HistoricalMatch 
                     {
-                        HomeGoals = (int) match.HomeCompetitor.Score,
-                        AwayGoals = (int) match.AwayCompetitor.Score,
-                        HomePossession = 0,
-                        AwayPossession = 0,
-                        MatchResult = (uint)(match.HomeCompetitor.Score > match.AwayCompetitor.Score ? 0 : (match.HomeCompetitor.Score < match.AwayCompetitor.Score ? 1 : 2))
+                        MatchDate = match.StartTime,
+                        HomeCompetitor = new Team
+                        {
+                            Name = match.HomeCompetitor.Name,
+                            Score = (int) match.HomeCompetitor.Score,
+                            IsWinner = match.HomeCompetitor.Score > match.AwayCompetitor.Score ? true : false,
+                            Statistics = new TeamStatistics
+                            {
+                                AvgGoals = 0.0f,
+                                ShotsPerGame = 0.0f,
+                                BallPossession = 0.0f,
+                                Fouls = 0.0f,      
+                            }
+                        },
+                        AwayCompetitor = new Team
+                        {
+                            Name = match.AwayCompetitor.Name,
+                            Score = (int) match.AwayCompetitor.Score,
+                            IsWinner = match.AwayCompetitor.Score > match.HomeCompetitor.Score ? true : false,
+                            Statistics = new TeamStatistics
+                            {
+                                AvgGoals = 0.0f,
+                                ShotsPerGame = 0.0f,
+                                BallPossession = 0.0f,
+                                Fouls = 0.0f,
+                            }
+                        },
+                        Result = MatchResultHelper.GetResult((int) match.HomeCompetitor.Score, (int) match.AwayCompetitor.Score)
                     };
 
-                    trainingDataList.Add(trainingData);
-                    Console.WriteLine(trainingData.ToString());
+                    trainingDataList.Add(historicalMatch);
+                    Console.WriteLine(historicalMatch.ToString());
                 });
             }
 
-            await _context.TrainingData.AddRangeAsync(trainingDataList);
+            await _context.HistoricalMatches.AddRangeAsync(trainingDataList);
             await _context.SaveChangesAsync();
         }
     }

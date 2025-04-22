@@ -4,6 +4,7 @@ using AI.Football.Predictions.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AI.Football.Predictions.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250422220831_HistoricalMatchesMigration")]
+    partial class HistoricalMatchesMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,6 +93,9 @@ namespace AI.Football.Predictions.API.Migrations
                     b.Property<bool>("IsWinner")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<int>("MatchId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -100,6 +106,37 @@ namespace AI.Football.Predictions.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Team");
+                });
+
+            modelBuilder.Entity("AI.Football.Predictions.API.Models.TeamStatistics", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<float>("AvgGoals")
+                        .HasColumnType("float");
+
+                    b.Property<float>("BallPossession")
+                        .HasColumnType("float");
+
+                    b.Property<float>("Fouls")
+                        .HasColumnType("float");
+
+                    b.Property<float>("ShotsPerGame")
+                        .HasColumnType("float");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId")
+                        .IsUnique();
+
+                    b.ToTable("TeamStatistics");
                 });
 
             modelBuilder.Entity("AI.Football.Predictions.API.Models.User", b =>
@@ -154,33 +191,17 @@ namespace AI.Football.Predictions.API.Migrations
                     b.Navigation("HomeCompetitor");
                 });
 
+            modelBuilder.Entity("AI.Football.Predictions.API.Models.TeamStatistics", b =>
+                {
+                    b.HasOne("AI.Football.Predictions.API.Models.Team", null)
+                        .WithOne("Statistics")
+                        .HasForeignKey("AI.Football.Predictions.API.Models.TeamStatistics", "TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("AI.Football.Predictions.API.Models.Team", b =>
                 {
-                    b.OwnsOne("AI.Football.Predictions.API.Models.TeamStatistics", "Statistics", b1 =>
-                        {
-                            b1.Property<int>("TeamId")
-                                .HasColumnType("int");
-
-                            b1.Property<float>("AvgGoals")
-                                .HasColumnType("float");
-
-                            b1.Property<float>("BallPossession")
-                                .HasColumnType("float");
-
-                            b1.Property<float>("Fouls")
-                                .HasColumnType("float");
-
-                            b1.Property<float>("ShotsPerGame")
-                                .HasColumnType("float");
-
-                            b1.HasKey("TeamId");
-
-                            b1.ToTable("Team");
-
-                            b1.WithOwner()
-                                .HasForeignKey("TeamId");
-                        });
-
                     b.Navigation("Statistics")
                         .IsRequired();
                 });

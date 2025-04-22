@@ -17,7 +17,7 @@ namespace AI.Football.Predictions.API.Controllers
             _matchDataProcessor = matchDataProcessor;
         }
 
-        [HttpPost("Import-training-data")]
+        [HttpPost("Process-data")]
         public async Task<IActionResult> ImportTrainingData()
         {
             await _matchDataProcessor.ProcessAndSaveMatchDataAsync();
