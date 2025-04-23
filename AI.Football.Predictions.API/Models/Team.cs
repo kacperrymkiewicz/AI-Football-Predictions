@@ -11,6 +11,5 @@ namespace AI.Football.Predictions.API.Models
         public string Name { get; set; }
         public int Score { get; set; }
         public bool IsWinner { get; set; }
-        public TeamStatistics Statistics { get; set; }
     }
 }
