@@ -10,6 +10,7 @@ namespace AI.Football.Predictions.API.Models
     {
         public int Id { get; set; }
         public DateTime MatchDate { get; set; }
+        public int MatchId { get; set; }
 
         public int HomeCompetitorId { get; set; }
         public Team HomeCompetitor { get; set; }

@@ -40,9 +40,12 @@ namespace AI.Football.Predictions.API.Services
                 foreach (var match in matches.Games) 
                 {
                     var relevantMatches = await _sportradarService.GetHead2HeadMatchesById(match.Id);
+                    var (h2hHomeWins, h2hAwayWins, h2hDraws) = CalculateHead2HeadStatistics(relevantMatches.Game.H2hGames, match.HomeCompetitor.Id, match.AwayCompetitor.Id);
+
                     var historicalMatch = new HistoricalMatch 
                     {
                         MatchDate = match.StartTime,
+                        MatchId = match.Id,
                         HomeCompetitor = new Team
                         {
                             Name = match.HomeCompetitor.Name,
@@ -57,9 +60,9 @@ namespace AI.Football.Predictions.API.Services
                             IsWinner = match.AwayCompetitor.Score > match.HomeCompetitor.Score
                         },
                         AwayStatistics = await CalculateRecentStatistics(relevantMatches.Game.AwayCompetitor.RecentGames, match.AwayCompetitor.Id),
-                        H2HHomeWins = 0,
-                        H2HAwayWins = 0,
-                        H2HDraws = 0,
+                        H2HHomeWins = h2hHomeWins,
+                        H2HAwayWins = h2hAwayWins,
+                        H2HDraws = h2hDraws,
 
                         Result = MatchResultHelper.GetResult((int) match.HomeCompetitor.Score, (int) match.AwayCompetitor.Score)
                     };
@@ -108,6 +111,32 @@ namespace AI.Football.Predictions.API.Services
                 AvgPossession = processedStatistics["Possession"].count == 0 ? 0 : processedStatistics["Possession"].sum / processedStatistics["Possession"].count,
                 AvgFouls = processedStatistics["Fouls"].count == 0 ? 0 : processedStatistics["Fouls"].sum / processedStatistics["Fouls"].count
             };
+        }
+
+        private (int h2hHomeWins, int h2hAwayWins, int h2hDraws) CalculateHead2HeadStatistics(IEnumerable<H2hGame> h2hMatches, int homeTeamId, int awayTeamId)
+        {
+            int h2hHomeWins = 0, h2hAwayWins = 0, h2hDraws = 0;
+
+            foreach (var match in h2hMatches)
+            {
+                bool isHome = match.HomeCompetitor.Id == homeTeamId;
+                bool isAway = match.AwayCompetitor.Id == awayTeamId;
+
+                if ((isHome && match.HomeCompetitor.Score > match.AwayCompetitor.Score) || (!isHome && match.HomeCompetitor.Score < match.AwayCompetitor.Score))
+                {
+                    h2hHomeWins++;
+                }
+                else if ((isAway && match.AwayCompetitor.Score > match.HomeCompetitor.Score) || (!isAway && match.AwayCompetitor.Score < match.HomeCompetitor.Score))
+                {
+                    h2hAwayWins++;
+                }
+                else if (match.HomeCompetitor.Score == match.AwayCompetitor.Score)
+                {
+                    h2hDraws++;
+                }
+            }
+
+            return (h2hHomeWins, h2hAwayWins, h2hDraws);
         }
 
         private Dictionary<string, (float sum, int count)> ProcessMatchStatistics(IEnumerable<Statistic> statistics, int teamId)
