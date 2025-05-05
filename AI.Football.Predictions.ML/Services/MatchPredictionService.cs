@@ -28,9 +28,9 @@ namespace AI.Football.Predictions.ML.Services
             }
         }
 
-        public void Train(string dataPath)
+        public void Train(IEnumerable<MatchData> matchData)
         {
-            var data = _mlContext.Data.LoadFromTextFile<MatchData>(dataPath, separatorChar: ',', hasHeader: true);
+            var data = _mlContext.Data.LoadFromEnumerable(matchData);
             var pipeline = _mlContext.Transforms.Conversion.MapValueToKey("Label")
                 .Append(_mlContext.Transforms.Concatenate("Features", 
                     nameof(MatchData.HomeGoalsAvg),

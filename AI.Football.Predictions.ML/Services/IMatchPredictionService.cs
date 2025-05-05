@@ -8,7 +8,7 @@ namespace AI.Football.Predictions.ML.Services
 {
     public interface IMatchPredictionService
     {
-        void Train(string dataPath);
+        void Train(IEnumerable<MatchData> matchData);
         MatchPrediction Predict(MatchData matchData);
     }
 }
