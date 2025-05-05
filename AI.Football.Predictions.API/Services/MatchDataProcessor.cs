@@ -121,34 +121,21 @@ namespace AI.Football.Predictions.API.Services
 
             if (statistics == null) return statDict;
             
-            var possessionStat = statistics.FirstOrDefault(s => s.Id == 10 && s.CompetitorId == teamId);
-            if (possessionStat != null)
-            {
-                statDict["Possession"] = (
-                    statDict["Possession"].sum + (float)possessionStat.ValuePercentage,
-                    statDict["Possession"].count + 1
-                );
-            }
-
-            var shotsStat = statistics.FirstOrDefault(s => s.Id == 3 && s.CompetitorId == teamId);
-            if (shotsStat != null && float.TryParse(shotsStat.Value, out float shots))
-            {
-                statDict["Shots"] = (
-                    statDict["Shots"].sum + shots,
-                    statDict["Shots"].count + 1
-                );
-            }
-
-            var foulsStat = statistics.FirstOrDefault(s => s.Id == 12 && s.CompetitorId == teamId);
-            if (foulsStat != null && float.TryParse(foulsStat.Value, out float fouls))
-            {
-                statDict["Fouls"] = (
-                    statDict["Fouls"].sum + fouls,
-                    statDict["Fouls"].count + 1
-                );
-            }
+            ProcessSingleStat(statistics, teamId, 10, "Possession", statDict, s => (float)s.ValuePercentage);
+            ProcessSingleStat(statistics, teamId, 3, "Shots", statDict, s => float.TryParse(s.Value, out var result) ? result : 0f);
+            ProcessSingleStat(statistics, teamId, 12, "Fouls", statDict, s => float.TryParse(s.Value, out var result) ? result : 0f);
 
             return statDict;
+        }
+
+        private void ProcessSingleStat(IEnumerable<Statistic> statistics, int teamId, int statId, string statKey, Dictionary<string, (float sum, int count)> statDict, Func<Statistic, float> valueExtractor)
+        {
+            var stat = statistics.FirstOrDefault(s => s.Id == statId && s.CompetitorId == teamId);
+            if (stat != null)
+            {
+                var extractedValue = valueExtractor(stat);
+                statDict[statKey] = (statDict[statKey].sum + extractedValue, statDict[statKey].count + 1);
+            }
         }
     }
 }
