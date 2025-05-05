@@ -26,7 +26,6 @@ namespace AI.Football.Predictions.API.Services
         public async Task ProcessAndSaveMatchDataAsync()
         {
             var trainingDataList = new List<HistoricalMatch>();
-            // await _context.Database.ExecuteSqlRawAsync("TRUNCATE trainingdata");
 
             var endDate = DateTime.UtcNow;
             var startDate = endDate.AddYears(-1);
@@ -35,9 +34,12 @@ namespace AI.Football.Predictions.API.Services
                 var currentEndDate = currentStartDate.AddMonths(1).AddDays(-1);
 
                 var matches = await _sportradarService.GetMatches(currentStartDate, currentEndDate);
+                if(matches.Games == null)
+                    continue;
 
                 foreach (var match in matches.Games) 
                 {
+                    var relevantMatches = await _sportradarService.GetHead2HeadMatchesById(match.Id);
                     var historicalMatch = new HistoricalMatch 
                     {
                         MatchDate = match.StartTime,
@@ -45,16 +47,16 @@ namespace AI.Football.Predictions.API.Services
                         {
                             Name = match.HomeCompetitor.Name,
                             Score = (int) match.HomeCompetitor.Score,
-                            IsWinner = match.HomeCompetitor.Score > match.AwayCompetitor.Score ? true : false
+                            IsWinner = match.HomeCompetitor.Score > match.AwayCompetitor.Score
                         },
-                        HomeStatistics = await CalculateRecentStatistics(match.Id, match.HomeCompetitor.Id),
+                        HomeStatistics = await CalculateRecentStatistics(relevantMatches.Game.HomeCompetitor.RecentGames, match.HomeCompetitor.Id),
                         AwayCompetitor = new Team
                         {
                             Name = match.AwayCompetitor.Name,
                             Score = (int) match.AwayCompetitor.Score,
-                            IsWinner = match.AwayCompetitor.Score > match.HomeCompetitor.Score ? true : false
+                            IsWinner = match.AwayCompetitor.Score > match.HomeCompetitor.Score
                         },
-                        AwayStatistics = await CalculateRecentStatistics(match.Id, match.AwayCompetitor.Id),
+                        AwayStatistics = await CalculateRecentStatistics(relevantMatches.Game.AwayCompetitor.RecentGames, match.AwayCompetitor.Id),
                         H2HHomeWins = 0,
                         H2HAwayWins = 0,
                         H2HDraws = 0,
@@ -71,17 +73,15 @@ namespace AI.Football.Predictions.API.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task<TeamRecentStatistics> CalculateRecentStatistics(int matchId, int teamId)
+        private async Task<TeamRecentStatistics> CalculateRecentStatistics(List<RecentGame> recentGames, int teamId)
         {
-            var relevantMatches = await _sportradarService.GetHead2HeadMatchesById(matchId);
-            bool isHomeCompetitor = relevantMatches.Game.HomeCompetitor.Id == teamId;
-            List<RecentGame> recentGames = isHomeCompetitor ? relevantMatches.Game.HomeCompetitor.RecentGames : relevantMatches.Game.AwayCompetitor.RecentGames;
-
+            Dictionary<string, (float sum, int count)> processedStatistics = [];
             int wins = 0, draws = 0, losses = 0;
             float totalGoals = 0;
 
-            foreach (var recentGame in recentGames)
+            foreach (var recentGame in recentGames.Take(10))
             {
+                var matchStatistics = await _sportradarService.GetMatchStatisticsById(recentGame.Id);
                 bool isHome = recentGame.HomeCompetitor.Id == teamId;
                 bool isAway = recentGame.AwayCompetitor.Id == teamId;
 
@@ -89,6 +89,8 @@ namespace AI.Football.Predictions.API.Services
                 int oppScore = (int)(isHome ?  recentGame.AwayCompetitor.Score : recentGame.HomeCompetitor.Score);
 
                 totalGoals += teamScore;
+
+                processedStatistics = ProcessMatchStatistics(matchStatistics.Statistics, teamId);
 
                 if (teamScore > oppScore) wins++;
                 else if (teamScore == oppScore) draws++;
@@ -102,10 +104,51 @@ namespace AI.Football.Predictions.API.Services
                 Draws = draws,
                 Losses = losses,
                 AvgGoals = recentGames.Count == 0 ? 0 : totalGoals / recentGames.Count,
-                AvgShots = 0,
-                AvgPossession = 0,
-                AvgFouls = 0
+                AvgShots = processedStatistics["Shots"].count == 0 ? 0 : processedStatistics["Shots"].sum / processedStatistics["Shots"].count,
+                AvgPossession = processedStatistics["Possession"].count == 0 ? 0 : processedStatistics["Possession"].sum / processedStatistics["Possession"].count,
+                AvgFouls = processedStatistics["Fouls"].count == 0 ? 0 : processedStatistics["Fouls"].sum / processedStatistics["Fouls"].count
             };
+        }
+
+        private Dictionary<string, (float sum, int count)> ProcessMatchStatistics(IEnumerable<Statistic> statistics, int teamId)
+        {
+            var statDict = new Dictionary<string, (float sum, int count)>
+            {
+                { "Possession", (0, 0) },
+                { "Shots", (0, 0) },
+                { "Fouls", (0, 0) }
+            };
+
+            if (statistics == null) return statDict;
+            
+            var possessionStat = statistics.FirstOrDefault(s => s.Id == 10 && s.CompetitorId == teamId);
+            if (possessionStat != null)
+            {
+                statDict["Possession"] = (
+                    statDict["Possession"].sum + (float)possessionStat.ValuePercentage,
+                    statDict["Possession"].count + 1
+                );
+            }
+
+            var shotsStat = statistics.FirstOrDefault(s => s.Id == 3 && s.CompetitorId == teamId);
+            if (shotsStat != null && float.TryParse(shotsStat.Value, out float shots))
+            {
+                statDict["Shots"] = (
+                    statDict["Shots"].sum + shots,
+                    statDict["Shots"].count + 1
+                );
+            }
+
+            var foulsStat = statistics.FirstOrDefault(s => s.Id == 12 && s.CompetitorId == teamId);
+            if (foulsStat != null && float.TryParse(foulsStat.Value, out float fouls))
+            {
+                statDict["Fouls"] = (
+                    statDict["Fouls"].sum + fouls,
+                    statDict["Fouls"].count + 1
+                );
+            }
+
+            return statDict;
         }
     }
 }
