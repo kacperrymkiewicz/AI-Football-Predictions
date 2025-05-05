@@ -76,7 +76,7 @@ namespace AI.Football.Predictions.API.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task<TeamRecentStatistics> CalculateRecentStatistics(List<RecentGame> recentGames, int teamId)
+        public async Task<TeamRecentStatistics> CalculateRecentStatistics(List<RecentGame> recentGames, int teamId)
         {
             Dictionary<string, (float sum, int count)> processedStatistics = [];
             int wins = 0, draws = 0, losses = 0;
@@ -113,7 +113,7 @@ namespace AI.Football.Predictions.API.Services
             };
         }
 
-        private (int h2hHomeWins, int h2hAwayWins, int h2hDraws) CalculateHead2HeadStatistics(IEnumerable<H2hGame> h2hMatches, int homeTeamId, int awayTeamId)
+        public (int h2hHomeWins, int h2hAwayWins, int h2hDraws) CalculateHead2HeadStatistics(IEnumerable<H2hGame> h2hMatches, int homeTeamId, int awayTeamId)
         {
             int h2hHomeWins = 0, h2hAwayWins = 0, h2hDraws = 0;
 

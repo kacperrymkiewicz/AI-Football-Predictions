@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AI.Football.Predictions.API.Services.Interfaces;
 using AI.Football.Predictions.Integrations.FootballData.Models;
 using AI.Football.Predictions.Integrations.FootballData.Services;
 using AI.Football.Predictions.Integrations.Sportradar.Models;
@@ -19,13 +20,15 @@ namespace AI.Football.Predictions.API.Controllers
         private readonly IFootballDataApiService _footballDataService;
         private readonly ISportradarApiService _sportradarService;
         private readonly IMatchPredictionService _predictionService;
+        private readonly IMatchService _matchService;
 
 
-        public MatchesController(IFootballDataApiService footballDataService, ISportradarApiService sportradarService, IMatchPredictionService predictionService)
+        public MatchesController(IFootballDataApiService footballDataService, ISportradarApiService sportradarService, IMatchPredictionService predictionService, IMatchService matchService)
         {
             _footballDataService = footballDataService;
             _sportradarService = sportradarService;
             _predictionService = predictionService;
+            _matchService = matchService;
         }
 
         [HttpGet(Name = "GetMatches")]
@@ -103,8 +106,17 @@ namespace AI.Football.Predictions.API.Controllers
             }
         }
 
-        [HttpPost("Predict", Name = "Predict match result")]
-        [EndpointSummary("")]
+        [HttpPost("{id}/Predict", Name = "GetMatchPredictionById")]
+        [EndpointSummary("Gets match prediction by matchId")]
+        public async Task<ActionResult<MatchPrediction>> PredictById(int id)
+        {
+            var matchPredictionData = await _matchService.GetMatchPredictionDataById(id);
+            var prediction = _predictionService.Predict(matchPredictionData);
+            return Ok(prediction);
+        }
+
+        [HttpPost("Predict", Name = "GetMatchPrediction")]
+        [EndpointSummary("Gets match prediction")]
         public ActionResult<MatchPrediction> Predict([FromBody] MatchData matchData)
         {
             if (matchData == null)

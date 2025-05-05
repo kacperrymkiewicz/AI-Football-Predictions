@@ -1,6 +1,7 @@
 using AI.Football.Predictions.API.Data;
 using AI.Football.Predictions.API.Repositories.Authentication;
 using AI.Football.Predictions.API.Services;
+using AI.Football.Predictions.API.Services.Interfaces;
 using AI.Football.Predictions.Integrations.FootballData.Extensions;
 using AI.Football.Predictions.Integrations.Sportradar.Extensions;
 using AI.Football.Predictions.ML.Services;
@@ -34,6 +35,7 @@ builder.Services.AddSportradarService(builder.Configuration);
 builder.Services.AddSingleton<IMatchPredictionService, MatchPredictionService>();
 
 builder.Services.AddScoped<MatchDataProcessor>();
+builder.Services.AddScoped<IMatchService, MatchService>();
 builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => 
