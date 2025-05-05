@@ -144,7 +144,7 @@
           <div class="col-md-12">
             <div class="match-prediction">
               <h3>Predykcja wyniku</h3>
-              @if (loadingStateService.isLoading('matchDetails')) {
+              @if (loadingStateService.isLoading('matchPrediction')) {
                 <div class="loading-spinner">
                   <div class="spinner-border" role="status">
                     <span class="visually-hidden">Loading...</span>
@@ -155,15 +155,15 @@
                 <div class="match-prediction__probability">
                   <div class="match-prediction__home-win">
                     <img [src]="getTeamLogoUrl(match.game?.homeCompetitor!.id!, 20)" [alt]="match.game?.homeCompetitor?.name">
-                    <span>38%</span>
+                    <span>{{ formatAsPercent(matchPrediction.score![0]) }}</span>
                   </div>
                   <div class="match-prediction__draw">
                     <h2>X</h2>
-                    <span>22%</span>
+                    <span>{{ formatAsPercent(matchPrediction.score![2]) }}</span>
                   </div>
                   <div class="match-prediction__away-win">
                     <img [src]="getTeamLogoUrl(match.game?.awayCompetitor!.id!, 20)" [alt]="match.game?.awayCompetitor?.name">
-                    <span>38%</span>
+                    <span>{{ formatAsPercent(matchPrediction.score![1]) }}</span>
                   </div>
                 </div>
               }

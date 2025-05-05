@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { SportradarHead2HeadResponse, SportradarMatchDetailsResponse, SportradarMatchStatisticsResponse } from '../../core/api-client/api-client';
+import { MatchPrediction, SportradarHead2HeadResponse, SportradarMatchDetailsResponse, SportradarMatchStatisticsResponse } from '../../core/api-client/api-client';
 import { MatchService } from '../../core/services/match.service';
 import { LoadingStateService } from '../../core/services/loading-state.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -23,12 +23,14 @@ export class MatchDetailsComponent implements OnInit {
   match!: SportradarMatchDetailsResponse;
   matchStatistics!: SportradarMatchStatisticsResponse;
   matchesH2h!: SportradarHead2HeadResponse;
+  matchPrediction!: MatchPrediction;
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.fetchMatchDetails();
       this.fetchMatchStatistics();
       this.fetchH2hMatches();
+      this.fetchMatchPrediction();
     });
   }
 
@@ -83,6 +85,23 @@ export class MatchDetailsComponent implements OnInit {
     });
   }
 
+  fetchMatchPrediction() {
+    const matchId = Number(this.route.snapshot.paramMap.get("id"));
+    this.loadingStateService.setState("matchPrediction", true);
+
+    this.matchService.getMatchPredictionById(matchId).subscribe({
+      next: (response) => {
+        this.matchPrediction = response;
+      },
+      error: () => {
+        this.loadingStateService.setState("matchPrediction", false, true);
+      },
+      complete: () => {
+        this.loadingStateService.setState("matchPrediction", false);
+      },
+    });
+  }
+
   getTeamLogoUrl(id: number, size: number = 20) {
     return `${environment.imageCacheUrl}/f_png,w_${size},h_${size},c_limit,q_auto:eco,dpr_2,d_Competitors:default1.png/v1/Competitors/${id}`  
   }
@@ -130,4 +149,9 @@ export class MatchDetailsComponent implements OnInit {
       match.homeCompetitor?.score === match.awayCompetitor?.score
     ).length ?? 0;
   }
+
+  formatAsPercent(value: number): string {
+    const percent = value * 100;
+    return percent.toFixed(2) + '%';
+  }  
 }
