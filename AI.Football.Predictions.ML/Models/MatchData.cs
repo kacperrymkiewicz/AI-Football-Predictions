@@ -20,6 +20,8 @@ namespace AI.Football.Predictions.ML.Models
         public float H2HHomeWins { get; set; }
         public float H2HAwayWins { get; set; }
         public float H2HDraws { get; set; }
+        public int HomeScore { get; set; }
+        public int AwayScore { get; set; }
 
         [ColumnName("Label")]
         public uint MatchResult { get; set; }

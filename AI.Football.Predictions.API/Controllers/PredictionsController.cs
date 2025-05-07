@@ -51,6 +51,8 @@ namespace AI.Football.Predictions.API.Controllers
                     H2HHomeWins = m.H2HHomeWins,
                     H2HAwayWins = m.H2HAwayWins,
                     H2HDraws = m.H2HDraws,
+                    HomeScore = m.HomeCompetitor.Score,
+                    AwayScore = m.AwayCompetitor.Score,
                     MatchResult = (uint)m.Result
                 }).ToListAsync();
 
