@@ -1,0 +1,22 @@
+@if (loadingStateService.isLoading('liveMatches')) {
+  <div class="loading-spinner">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <h3>Trwa wczytywanie listy meczów...</h3>
+  </div>
+} @else {
+  @if(loadingStateService.hasError('liveMatches')) {
+    <p>blad</p>
+  } @else {
+    @if(matchService.liveMatches()?.games!.length > 0) {
+      <h3>Znaleziono {{ matchService.liveMatches()?.games?.length }} meczy</h3>
+    }
+    @for (match of matchService.liveMatches()?.games; track $index) {
+      <app-match-item [match]="match"></app-match-item>
+    }
+    @empty {
+      <h3>W najbliższym czasie nie są rozgrywane żadne mecze</h3>
+    }
+  }
+}

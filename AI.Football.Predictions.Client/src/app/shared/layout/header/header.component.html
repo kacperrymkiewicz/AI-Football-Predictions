@@ -21,6 +21,9 @@
           <li class="nav-item">
             <button class="nav-link" routerLink="/players" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Zawodnicy</button>
           </li>
+          <li class="nav-item">
+            <button class="nav-link" routerLink="/past-predictions" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Przeszłe predykcje</button>
+          </li>
           @if (!user) {
             <li class="nav-item">
               <button class="nav-link" routerLink="/auth/login" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Logowanie</button>
