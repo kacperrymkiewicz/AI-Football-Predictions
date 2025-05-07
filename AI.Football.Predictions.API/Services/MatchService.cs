@@ -31,8 +31,8 @@ namespace AI.Football.Predictions.API.Services
 
         return new MatchData
         {
-            HomeGoalsAvg = 0,
-            AwayGoalsAvg = 0,
+            HomeGoalsAvg = homeStatistics.AvgGoals,
+            AwayGoalsAvg = awayStatistics.AvgGoals,
             HomePossessionAvg = 0,
             AwayPossessionAvg = 0,
             HomeShotsAvg = 0,
