@@ -155,15 +155,15 @@
                 <div class="match-prediction__probability">
                   <div class="match-prediction__home-win">
                     <img [src]="getTeamLogoUrl(match.game?.homeCompetitor!.id!, 20)" [alt]="match.game?.homeCompetitor?.name">
-                    <span>{{ formatAsPercent(matchPrediction.score![0]) }}</span>
+                    <span [style.color]="matchPrediction.predictedResult == 0 && '#08d565'">{{ formatAsPercent(matchPrediction.score![0]) }}</span>
                   </div>
                   <div class="match-prediction__draw">
                     <h2>X</h2>
-                    <span>{{ formatAsPercent(matchPrediction.score![2]) }}</span>
+                    <span [style.color]="matchPrediction.predictedResult == 2 && '#08d565'">{{ formatAsPercent(matchPrediction.score![2]) }}</span>
                   </div>
                   <div class="match-prediction__away-win">
                     <img [src]="getTeamLogoUrl(match.game?.awayCompetitor!.id!, 20)" [alt]="match.game?.awayCompetitor?.name">
-                    <span>{{ formatAsPercent(matchPrediction.score![1]) }}</span>
+                    <span [style.color]="matchPrediction.predictedResult == 1 && '#08d565'">{{ formatAsPercent(matchPrediction.score![1]) }}</span>
                   </div>
                 </div>
               }
