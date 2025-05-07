@@ -1,0 +1,68 @@
+@import 'variables';
+
+#match-filter {
+  .match-filter__container {
+    background-color: $primary-dark-color;
+    border-radius: 16px;
+    margin-bottom: 10px;
+
+    .match-filter__datepicker {
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+    }
+
+    .match-filter__datepicker-input {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+
+      i {
+        font-size: 12px;
+        margin-left: 8px;
+      }
+    }
+
+    .match-filter__datepicker-input:hover {
+      opacity: 0.6;
+    }
+
+    .match-filter__datepicker-button {
+      background-color: #4a4a4a;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+    }
+
+    .match-filter__datepicker-button:hover {
+      background-color: white;
+
+      i {
+        color: black;
+      }
+    }
+
+    .match-filter__options {
+      padding: 15px 20px;
+
+      button {
+        background-color: #333;
+        color: white;
+        border-radius: 22px;
+        margin-right: 4px;
+        padding: 6px 18px;
+        font-weight: 600;
+      }
+
+      button:hover {
+        background-color: #3c3c3c;
+      }
+    }
+  }
+}

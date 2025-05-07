@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { LoadingStateService } from '../../core/services/loading-state.service';
 import { MatchService } from '../../core/services/match.service';
 import { MatchItemComponent } from './match-item/match-item.component';
+import { MatchFilterComponent } from './match-filter/match-filter.component';
 
 @Component({
   selector: 'app-live-matches',
   standalone: true,
-  imports: [MatchItemComponent],
+  imports: [MatchItemComponent, MatchFilterComponent],
   templateUrl: './live-matches.component.html',
   styleUrl: './live-matches.component.scss'
 })
