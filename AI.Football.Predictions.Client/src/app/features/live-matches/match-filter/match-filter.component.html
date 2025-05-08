@@ -11,7 +11,13 @@
               <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (ngModelChange)="onDateChange()">
               <mat-datepicker touchUi #picker></mat-datepicker>
             </mat-form-field>
-            {{ selectedDate | relativeDate }} <i class="bi bi-caret-down-fill"></i>
+            {{ selectedDate | relativeDate }} 
+            @if (!picker.opened) {
+              <i class="bi bi-caret-down-fill"></i>
+            }
+            @else {
+              <i class="bi bi-caret-up-fill"></i>
+            }
           </div>
           <span class="match-filter__datepicker-button" (click)="changeDate('next')">
             <i class="bi bi-chevron-right"></i>
