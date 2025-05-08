@@ -3,11 +3,16 @@
     <div class="col-md-12">
       <div class="match-filter__container">
         <div class="match-filter__datepicker">
-          <span class="match-filter__datepicker-button">
+          <span class="match-filter__datepicker-button" (click)="changeDate('prev')">
             <i class="bi bi-chevron-left"></i>
           </span>
-          <div class="match-filter__datepicker-input">Sobota, 19 maja <i class="bi bi-caret-down-fill"></i></div>
-          <span class="match-filter__datepicker-button">
+          <div class="match-filter__datepicker-input" (click)="picker.open()">
+            <mat-form-field class="example-full-width" class="d-none">
+              <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (ngModelChange)="onDateChange()">
+              <mat-datepicker touchUi #picker></mat-datepicker>
+            </mat-form-field>
+            {{ selectedDate | relativeDate }} <i class="bi bi-caret-down-fill"></i></div>
+          <span class="match-filter__datepicker-button" (click)="changeDate('next')">
             <i class="bi bi-chevron-right"></i>
           </span>
         </div>

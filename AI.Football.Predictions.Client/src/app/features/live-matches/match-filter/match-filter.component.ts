@@ -1,12 +1,41 @@
-import { Component } from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {DateAdapter, MAT_DATE_LOCALE, provideNativeDateAdapter} from '@angular/material/core';
+import { FormsModule } from '@angular/forms';
+import { MatchDatePipe } from "../../../core/pipes/match-date.pipe";
+import { CustomDateAdapter } from './custom-date-adapter';
+import { RelativeDatePipe } from "../../../core/pipes/relative-date.pipe";
 
 @Component({
   selector: 'app-match-filter',
   standalone: true,
-  imports: [],
+  providers: [
+    provideNativeDateAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: 'pl-PL' },
+    { provide: DateAdapter, useClass: CustomDateAdapter },
+  ],
+  imports: [MatFormFieldModule, MatInputModule, MatDatepickerModule, FormsModule, RelativeDatePipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './match-filter.component.html',
   styleUrl: './match-filter.component.scss'
 })
 export class MatchFilterComponent {
+  selectedDate: Date = new Date();
 
+  changeDate(direction: string): void {
+    const newDate = new Date(this.selectedDate);
+
+    if (direction === 'prev') {
+      newDate.setDate(newDate.getDate() - 1);
+    } else if (direction === 'next') {
+      newDate.setDate(newDate.getDate() + 1);
+    }
+    this.selectedDate = newDate;
+  }
+
+  onDateChange() {
+    
+  }
 }
