@@ -7,11 +7,13 @@ import { MatchDatePipe } from "../../core/pipes/match-date.pipe";
 import { environment } from '../../../environments/environment';
 import { MatchCountdownComponent } from "./match-countdown/match-countdown.component";
 import { slugify } from '../../core/utils/slugify';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-match-details',
   standalone: true,
-  imports: [MatchDatePipe, MatchCountdownComponent, RouterLink],
+  imports: [MatchDatePipe, MatchCountdownComponent, RouterLink, MatTabsModule, MatButtonModule],
   templateUrl: './match-details.component.html',
   styleUrl: './match-details.component.scss'
 })
@@ -24,6 +26,8 @@ export class MatchDetailsComponent implements OnInit {
   matchStatistics!: SportradarMatchStatisticsResponse;
   matchesH2h!: SportradarHead2HeadResponse;
   matchPrediction!: MatchPrediction;
+
+  activeTab: string = "h2h";
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {

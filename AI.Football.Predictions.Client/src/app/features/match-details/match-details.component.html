@@ -56,87 +56,133 @@
                 <div class="match-header__goals">
     
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-12">
                   <div class="match-info">
-                    <p>{{ match.game?.startTime! | matchDate }}</p>
-                    <p>{{ match.game?.statusText }}</p>
-                    <p>{{ match.game?.statusGroup }}</p>
-                    @if (match.game?.statusGroup == 3) {
-                      <p>{{ match.game?.homeCompetitor?.score }} - {{ match.game?.awayCompetitor?.score }}</p>
-                    }
+                    <p class="text-center">{{ match.game?.statusText }}</p>
                   </div>
                 </div>
               }
+              <div class="match-header__navigation">
+                <nav mat-tab-nav-bar fitInkBarToContent [tabPanel]="tabPanel">
+                  <a mat-tab-link (click)="activeTab = 'h2h'" [active]="activeTab == 'h2h'">Mecze bezpośrednie</a>
+                  <a mat-tab-link (click)="activeTab = 'statistics'" [active]="activeTab == 'statistics'">Statystyki</a>
+                </nav>
+                <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+              </div>
             </div>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-12">
-            <div class="matches-h2h">
-              @if (loadingStateService.isLoading('matchesH2h') || loadingStateService.isLoading('matchDetails')) {
-                <div class="loading-spinner">
-                  <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                  </div>
-                  <h3>Trwa pobieranie bezpośrednich meczy...</h3>
-                </div>
-              } @else {
-                <div class="matches-h2h__header">
-                  <h2>Ostatnie mecze bezpośrednie</h2>
-                </div>
-                <div class="matches-h2h__statistics">
-                  <div class="matches-h2h__statistics-home-logo">
-                    <img [src]="getTeamLogoUrl(match.game?.homeCompetitor!.id!)" [alt]="match.game?.homeCompetitor?.name">
-                  </div>
-                  <div class="matches-h2h__statistics-stats">
-                    <div class="matches-h2h__statistics-home-wins">
-                      <span class="matches-h2h__statistics-home-wins-counter">{{ homeWins }}</span>
-                      <span class="matches-h2h__statistics-label">Zwycięstwa</span>
+          @if (activeTab == 'h2h') {
+            <div class="col-md-12">
+              <div class="matches-h2h">
+                @if (loadingStateService.isLoading('matchesH2h') || loadingStateService.isLoading('matchDetails')) {
+                  <div class="loading-spinner">
+                    <div class="spinner-border" role="status">
+                      <span class="visually-hidden">Loading...</span>
                     </div>
-                    <div class="matches-h2h__statistics-draws">
-                      <span class="matches-h2h__statistics-draws-counter">{{ draws }}</span>
-                      <span class="matches-h2h__statistics-label">Remisy</span>
+                    <h3>Trwa pobieranie bezpośrednich meczy...</h3>
+                  </div>
+                } @else {
+                  <div class="matches-h2h__header">
+                    <h2>Ostatnie mecze bezpośrednie</h2>
+                  </div>
+                  <div class="matches-h2h__statistics">
+                    <div class="matches-h2h__statistics-home-logo">
+                      <img [src]="getTeamLogoUrl(match.game?.homeCompetitor!.id!)" [alt]="match.game?.homeCompetitor?.name">
                     </div>
-                    <div class="matches-h2h__statistics-away-wins">
-                      <span class="matches-h2h__statistics-away-wins-counter">{{ awayWins }}</span>
-                      <span class="matches-h2h__statistics-label">Zwycięstwa</span>
+                    <div class="matches-h2h__statistics-stats">
+                      <div class="matches-h2h__statistics-home-wins">
+                        <span class="matches-h2h__statistics-home-wins-counter">{{ homeWins }}</span>
+                        <span class="matches-h2h__statistics-label">Zwycięstwa</span>
+                      </div>
+                      <div class="matches-h2h__statistics-draws">
+                        <span class="matches-h2h__statistics-draws-counter">{{ draws }}</span>
+                        <span class="matches-h2h__statistics-label">Remisy</span>
+                      </div>
+                      <div class="matches-h2h__statistics-away-wins">
+                        <span class="matches-h2h__statistics-away-wins-counter">{{ awayWins }}</span>
+                        <span class="matches-h2h__statistics-label">Zwycięstwa</span>
+                      </div>
+                    </div>
+                    <div class="matches-h2h__statistics-away-logo">
+                      <img [src]="getTeamLogoUrl(match.game?.awayCompetitor!.id!)" [alt]="match.game?.awayCompetitor?.name">
                     </div>
                   </div>
-                  <div class="matches-h2h__statistics-away-logo">
-                    <img [src]="getTeamLogoUrl(match.game?.awayCompetitor!.id!)" [alt]="match.game?.awayCompetitor?.name">
-                  </div>
-                </div>
-                <div class="matches-h2h__list">
-                  <ul>
-                    @for (matchH2h of matchesH2h.game?.h2hGames; track $index) {
-                      <li>
-                        <div class="matches-h2h__date-and-league">
-                          <span>{{ matchH2h.startTime! | matchDate:'fullDate' }}</span>
-                          <span class="matches-h2h__league">
-                            {{ matchH2h.competitionDisplayName }}
-                            <img [src]="getCompetitionLogoUrl(matchH2h.competitionId!)" [alt]="matchH2h.competitionDisplayName">
-                          </span>
-                        </div>
-                        <a [routerLink]="['/match', matchH2h.id, slugify(matchH2h.homeCompetitor!.name + '-' + matchH2h.awayCompetitor!.name)]">
-                          <div class="matches-h2h__result">
-                            <span class="matches-h2h__result-team-home">
-                              {{ matchH2h.homeCompetitor?.name }}
-                              <img [src]="getTeamLogoUrl(matchH2h.homeCompetitor!.id!, 12)" [alt]="matchH2h.homeCompetitor?.name">
-                            </span> 
-                            <span class="matches-h2h__result-score">{{ matchH2h.homeCompetitor?.score }} - {{ matchH2h.awayCompetitor?.score }}</span> 
-                            <span class="matches-h2h__result-team-away">
-                              <img [src]="getTeamLogoUrl(matchH2h.awayCompetitor!.id!, 12)" [alt]="matchH2h.awayCompetitor?.name">
-                              {{ matchH2h.awayCompetitor?.name }}
+                  <div class="matches-h2h__list">
+                    <ul>
+                      @for (matchH2h of matchesH2h.game?.h2hGames; track $index) {
+                        <li>
+                          <div class="matches-h2h__date-and-league">
+                            <span>{{ matchH2h.startTime! | matchDate:'fullDate' }}</span>
+                            <span class="matches-h2h__league">
+                              {{ matchH2h.competitionDisplayName }}
+                              <img [src]="getCompetitionLogoUrl(matchH2h.competitionId!)" [alt]="matchH2h.competitionDisplayName">
                             </span>
                           </div>
-                        </a>
-                      </li>
-                    }
-                  </ul>
-                </div>
-              }
+                          <a [routerLink]="['/match', matchH2h.id, slugify(matchH2h.homeCompetitor!.name + '-' + matchH2h.awayCompetitor!.name)]">
+                            <div class="matches-h2h__result">
+                              <span class="matches-h2h__result-team-home">
+                                {{ matchH2h.homeCompetitor?.name }}
+                                <img [src]="getTeamLogoUrl(matchH2h.homeCompetitor!.id!, 12)" [alt]="matchH2h.homeCompetitor?.name">
+                              </span> 
+                              <span class="matches-h2h__result-score">{{ matchH2h.homeCompetitor?.score }} - {{ matchH2h.awayCompetitor?.score }}</span> 
+                              <span class="matches-h2h__result-team-away">
+                                <img [src]="getTeamLogoUrl(matchH2h.awayCompetitor!.id!, 12)" [alt]="matchH2h.awayCompetitor?.name">
+                                {{ matchH2h.awayCompetitor?.name }}
+                              </span>
+                            </div>
+                          </a>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
             </div>
+          }
+          @if (activeTab == 'statistics') {
+            <div class="col-md-12">
+              <div class="match-statistics">
+                <div class="match-statistics__header">
+                  <h2>Statystyki</h2>
+                </div>
+                <div class="match-statistics__content">
+                  @if (loadingStateService.isLoading('matchStatistics')) {
+                    <div class="loading-spinner">
+                      <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                      <h3>Trwa wczytywanie statystyk...</h3>
+                    </div>
+                  } @else {
+                    @if (homeStats.length > 0 && awayStats.length > 0) {
+                      <div class="col-md-12">
+                        <div class="match-statistics">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <h3>Gospodarz</h3>
+                              @for (homeStat of homeStats; track $index) {
+                                <p>{{ homeStat.name }}: {{ homeStat.value }}</p>
+                              }
+                            </div>
+                            <div class="col-md-6">
+                              <h3>Gość</h3>
+                              @for (awayStat of awayStats; track $index) {
+                                <p>{{ awayStat.name }}: {{ awayStat.value }}</p>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    } @else {
+                      <h3>Brak dostępnych statystyk</h3>
+                    }
+                  }
+                </div>
+              </div>
           </div>
+          }
         </div>
       </div>
       <div class="col-md-3">
@@ -171,37 +217,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="row">
-      <h2>Statystyki</h2>
-      @if (loadingStateService.isLoading('matchStatistics')) {
-        <div class="loading-spinner">
-          <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <h3>Trwa wczytywanie statystyk...</h3>
-        </div>
-      } @else {
-        <div class="col-md-6">
-          <div class="match-statistics">
-            <div class="row">
-              <div class="col-md-6">
-                <h3>Gospodarz</h3>
-                @for (homeStat of homeStats; track $index) {
-                  <p>{{ homeStat.name }}: {{ homeStat.value }}</p>
-                }
-              </div>
-              <div class="col-md-6">
-                <h3>Gość</h3>
-                @for (awayStat of awayStats; track $index) {
-                  <p>{{ awayStat.name }}: {{ awayStat.value }}</p>
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-      }
     </div>
   </div>
 </section>

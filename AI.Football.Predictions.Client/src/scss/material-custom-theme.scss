@@ -41,3 +41,28 @@
       height: 70vh!important;
   }
 }
+
+.mat-mdc-tab-link .mdc-tab-indicator__content--underline {
+  border-color: $primary-color!important;
+  border-width: 4px !important;
+  border-radius: 3px 3px 0 0 !important;
+}
+
+.mat-mdc-tab-link .mdc-tab__text-label {
+  color: #9f9f9f!important;
+  font-weight: 700!important;
+  margin-bottom: 6px!important;
+  padding: 10px!important;
+}
+
+.mat-mdc-tab-link-container {
+  border-bottom-style: none!important;
+}
+
+.mat-mdc-tab-header.mat-mdc-tab-nav-bar-stretch-tabs .mat-mdc-tab-link {
+  flex-grow: unset!important;
+}
+
+.mdc-tab--active .mdc-tab__text-label {
+  color: white!important;
+}
