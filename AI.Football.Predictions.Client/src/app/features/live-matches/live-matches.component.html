@@ -13,16 +13,16 @@
         </div>
       } @else {
         @if(loadingStateService.hasError('liveMatches')) {
-          <p>blad</p>
+          <h3>Wystąpił problem w trakcie pobierania meczów</h3>
         } @else {
-          @if(matchService.liveMatches()?.games!.length > 0) {
-            <h3>Znaleziono {{ matchService.liveMatches()?.games?.length }} meczy</h3>
+          @if(matchService.liveMatches()?.games) {
+            <h3>Znaleziono <span class="live-matches__counter">{{ matchService.liveMatches()?.games?.length }}</span> meczy</h3>
           }
           @for (match of matchService.liveMatches()?.games; track $index) {
             <app-match-item [match]="match"></app-match-item>
           }
           @empty {
-            <h3>W najbliższym czasie nie są rozgrywane żadne mecze</h3>
+            <h3>W wybranym czasie nie są rozgrywane żadne mecze</h3>
           }
         }
       }

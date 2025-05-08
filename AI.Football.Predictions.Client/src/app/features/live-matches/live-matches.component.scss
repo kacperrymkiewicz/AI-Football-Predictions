@@ -1,3 +1,5 @@
+@import 'variables';
+
 .loading-spinner {
   display: flex;
   flex-direction: column;
@@ -7,5 +9,11 @@
 
   h3 {
     font-weight: 600;
+  }
+}
+
+#live-matches {
+  .live-matches__counter {
+    color: $primary-color;
   }
 }
