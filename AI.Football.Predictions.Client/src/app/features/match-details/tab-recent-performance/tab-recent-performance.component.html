@@ -1,0 +1,63 @@
+<div class="col-md-12">
+  <div class="matches-recent-performance">
+    @if (loadingStateService.isLoading('matchesH2h') || loadingStateService.isLoading('matchDetails')) {
+      <div class="loading-spinner">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <h3>Trwa wczytywanie ostatnich wyników...</h3>
+      </div>
+    } @else {
+      <div class="matches-recent-performance__header">
+        <h2>Forma zespołów</h2>
+      </div>
+      <div class="matches-recent-performance__content">
+        <div class="row">
+          <div class="col-md-6">
+            @for (homeCompetitorMatch of homePerformance.slice(0, 5); track $index) {
+              <div class="col-md-12">
+                <a [routerLink]="['/match', homeCompetitorMatch.id, slugify(homeCompetitorMatch.homeCompetitor!.name + '-' + homeCompetitorMatch.awayCompetitor!.name)]">
+                  <div class="match-performance-item">
+                    <div class="col-md-5 text-end">
+                      <span>{{ homeCompetitorMatch.homeCompetitor?.name }}</span>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="match-performance-item__result">
+                        <span [class]="getResultClass(homeCompetitorMatch, homeCompetitorId)">{{ homeCompetitorMatch.homeCompetitor?.score }} - {{ homeCompetitorMatch.awayCompetitor?.score }}</span>
+                      </div>
+                    </div>
+                    <div class="col-md-5">
+                      <span>{{ homeCompetitorMatch.awayCompetitor?.name }}</span>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            }
+          </div>
+  
+          <div class="col-md-6">
+            @for (awayCompetitorMatch of awayPerformance.slice(0, 5); track $index) {
+              <div class="col-md-12">
+                <a [routerLink]="['/match', awayCompetitorMatch.id, slugify(awayCompetitorMatch.homeCompetitor!.name + '-' + awayCompetitorMatch.awayCompetitor!.name)]">
+                  <div class="match-performance-item">
+                    <div class="col-md-5 text-end">
+                      <span>{{ awayCompetitorMatch.homeCompetitor?.name }}</span>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="match-performance-item__result">
+                        <span [class]="getResultClass(awayCompetitorMatch, awayCompetitorId)">{{ awayCompetitorMatch.homeCompetitor?.score }} - {{ awayCompetitorMatch.awayCompetitor?.score }}</span>
+                      </div>
+                    </div>
+                    <div class="col-md-5">
+                      <span>{{ awayCompetitorMatch.awayCompetitor?.name }}</span>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

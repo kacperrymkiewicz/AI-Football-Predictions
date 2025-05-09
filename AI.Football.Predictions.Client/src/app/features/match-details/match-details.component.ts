@@ -10,11 +10,12 @@ import { slugify } from '../../core/utils/slugify';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MAT_RIPPLE_GLOBAL_OPTIONS } from '@angular/material/core';
+import { TabRecentPerformanceComponent } from "./tab-recent-performance/tab-recent-performance.component";
 
 @Component({
   selector: 'app-match-details',
   standalone: true,
-  imports: [MatchDatePipe, MatchCountdownComponent, RouterLink, MatTabsModule, MatButtonModule],
+  imports: [MatchDatePipe, MatchCountdownComponent, RouterLink, MatTabsModule, MatButtonModule, TabRecentPerformanceComponent],
   providers: [
     { provide: MAT_RIPPLE_GLOBAL_OPTIONS, useValue: { disabled: true } }
   ],

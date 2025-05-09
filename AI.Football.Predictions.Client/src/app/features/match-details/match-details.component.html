@@ -66,6 +66,7 @@
                 <nav mat-tab-nav-bar fitInkBarToContent [tabPanel]="tabPanel">
                   <a mat-tab-link (click)="activeTab = 'h2h'" [active]="activeTab == 'h2h'">Mecze bezpośrednie</a>
                   <a mat-tab-link (click)="activeTab = 'statistics'" [active]="activeTab == 'statistics'">Statystyki</a>
+                  <a mat-tab-link (click)="activeTab = 'recent-performance'" [active]="activeTab == 'recent-performance'">Ostatnie wyniki</a>
                 </nav>
                 <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
               </div>
@@ -182,6 +183,14 @@
                 </div>
               </div>
           </div>
+          }
+          @if (activeTab == 'recent-performance') {
+            <app-tab-recent-performance 
+              [homeCompetitorId]="matchesH2h.game?.homeCompetitor?.id!"
+              [homePerformance]="matchesH2h.game?.homeCompetitor?.recentGames!" 
+              [awayCompetitorId]="matchesH2h.game?.awayCompetitor?.id!"
+              [awayPerformance]="matchesH2h.game?.awayCompetitor?.recentGames!">
+            </app-tab-recent-performance>
           }
         </div>
       </div>
