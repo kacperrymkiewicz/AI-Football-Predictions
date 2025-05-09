@@ -35,11 +35,18 @@ namespace AI.Football.Predictions.API.Services
                 {
                     HomeGoalsAvg = match.HomeStatistics.AvgGoals,
                     AwayGoalsAvg = match.AwayStatistics.AvgGoals,
+                    HomePossessionAvg = match.HomeStatistics.AvgPossession,
+                    AwayPossessionAvg = match.AwayStatistics.AvgPossession,
+                    HomeShotsAvg = match.HomeStatistics.AvgShots,
+                    AwayShotsAvg = match.AwayStatistics.AvgShots,
                     HomeWinRate = match.HomeStatistics.WinRate,
                     AwayWinRate = match.AwayStatistics.WinRate,
                     H2HHomeWins = match.H2HHomeWins,
                     H2HAwayWins = match.H2HAwayWins,
-                    H2HDraws = match.H2HDraws
+                    H2HDraws = match.H2HDraws,
+                    H2HHomeWinRate = match.H2HHomeWinRate,
+                    H2HAwayWinRate = match.H2HAwayWinRate,
+                    H2HDrawRate = match.H2HDrawRate
                 };
             
                 var prediction = _matchPredictionService.Predict(predictionData);

@@ -24,6 +24,10 @@ namespace AI.Football.Predictions.API.Models
         public int H2HHomeWins { get; set; }
         public int H2HAwayWins { get; set; }
         public int H2HDraws { get; set; }
+        
+        public float H2HHomeWinRate => H2HHomeWins == 0 ? 0 : (float) H2HHomeWins / (H2HHomeWins + H2HAwayWins + H2HDraws);
+        public float H2HAwayWinRate => H2HAwayWins == 0 ? 0 : (float) H2HAwayWins / (H2HHomeWins + H2HAwayWins + H2HDraws);
+        public float H2HDrawRate => H2HDraws == 0 ? 0 : (float) H2HDraws / (H2HHomeWins + H2HAwayWins + H2HDraws);
 
         public Result Result { get; set; }
 

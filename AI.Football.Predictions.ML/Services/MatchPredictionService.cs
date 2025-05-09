@@ -35,15 +35,18 @@ namespace AI.Football.Predictions.ML.Services
                 .Append(_mlContext.Transforms.Concatenate("Features", 
                     nameof(MatchData.HomeGoalsAvg),
                     nameof(MatchData.AwayGoalsAvg), 
-                    nameof(MatchData.HomePossessionAvg),
-                    nameof(MatchData.AwayPossessionAvg), 
-                    nameof(MatchData.HomeShotsAvg),
-                    nameof(MatchData.AwayShotsAvg), 
+                    // nameof(MatchData.HomePossessionAvg),
+                    // nameof(MatchData.AwayPossessionAvg), 
+                    // nameof(MatchData.HomeShotsAvg),
+                    // nameof(MatchData.AwayShotsAvg), 
                     nameof(MatchData.HomeWinRate),
                     nameof(MatchData.AwayWinRate), 
                     nameof(MatchData.H2HHomeWins),
                     nameof(MatchData.H2HAwayWins), 
-                    nameof(MatchData.H2HDraws)))
+                    nameof(MatchData.H2HDraws),
+                    nameof(MatchData.H2HHomeWinRate), 
+                    nameof(MatchData.H2HAwayWinRate), 
+                    nameof(MatchData.H2HDrawRate)))
                 .Append(_mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy())
                 .Append(_mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
 

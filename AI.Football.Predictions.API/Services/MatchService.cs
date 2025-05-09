@@ -33,15 +33,18 @@ namespace AI.Football.Predictions.API.Services
         {
             HomeGoalsAvg = homeStatistics.AvgGoals,
             AwayGoalsAvg = awayStatistics.AvgGoals,
-            HomePossessionAvg = 0,
-            AwayPossessionAvg = 0,
-            HomeShotsAvg = 0,
-            AwayShotsAvg = 0,
+            HomePossessionAvg = homeStatistics.AvgPossession,
+            AwayPossessionAvg = awayStatistics.AvgPossession,
+            HomeShotsAvg = homeStatistics.AvgShots,
+            AwayShotsAvg = awayStatistics.AvgShots,
             HomeWinRate = homeStatistics.WinRate,
             AwayWinRate = awayStatistics.WinRate,
             H2HHomeWins = h2hHomeWins,
             H2HAwayWins = h2hAwayWins,
-            H2HDraws = h2hDraws
+            H2HDraws = h2hDraws,
+            H2HHomeWinRate = h2hHomeWins == 0 ? 0 : (float) h2hHomeWins / (h2hHomeWins + h2hAwayWins + h2hDraws),
+            H2HAwayWinRate = h2hAwayWins == 0 ? 0 : (float) h2hAwayWins / (h2hHomeWins + h2hAwayWins + h2hDraws),
+            H2HDrawRate = h2hDraws == 0 ? 0 : (float) h2hDraws / (h2hHomeWins + h2hAwayWins + h2hDraws),
         };
     }
   }

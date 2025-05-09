@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AI.Football.Predictions.API.Data;
+using AI.Football.Predictions.API.Models;
 using AI.Football.Predictions.API.Services;
 using AI.Football.Predictions.API.Services.Interfaces;
 using AI.Football.Predictions.ML.Models;
@@ -54,6 +55,9 @@ namespace AI.Football.Predictions.API.Controllers
                     H2HHomeWins = m.H2HHomeWins,
                     H2HAwayWins = m.H2HAwayWins,
                     H2HDraws = m.H2HDraws,
+                    H2HHomeWinRate = m.H2HHomeWinRate,
+                    H2HAwayWinRate = m.H2HAwayWinRate,
+                    H2HDrawRate = m.H2HDrawRate,
                     HomeScore = m.HomeCompetitor.Score,
                     AwayScore = m.AwayCompetitor.Score,
                     MatchResult = (uint)m.Result
@@ -69,7 +73,7 @@ namespace AI.Football.Predictions.API.Controllers
         }
 
         [HttpGet("Accuracy")]
-        public async Task<IActionResult> GetPredictionStatistics()
+        public async Task<ActionResult<PredictionAccuracy>> GetPredictionStatistics()
         {
             var predictionAccuracy = await _predictionDataService.GetPredictionAccuracy();
             return Ok(predictionAccuracy);
