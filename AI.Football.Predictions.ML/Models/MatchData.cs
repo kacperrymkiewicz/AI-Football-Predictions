@@ -25,6 +25,7 @@ namespace AI.Football.Predictions.ML.Models
         public float H2HDrawRate { get; set; }
         public int HomeScore { get; set; }
         public int AwayScore { get; set; }
+        public float Weight => MatchResult == 2 ? 0.7f : 1f;
 
         [ColumnName("Label")]
         public uint MatchResult { get; set; }

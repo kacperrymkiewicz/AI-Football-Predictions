@@ -47,7 +47,8 @@ namespace AI.Football.Predictions.ML.Services
                     nameof(MatchData.H2HHomeWinRate), 
                     nameof(MatchData.H2HAwayWinRate), 
                     nameof(MatchData.H2HDrawRate)))
-                .Append(_mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy())
+                .Append(_mlContext.Transforms.NormalizeMinMax("Features", "Features"))
+                .Append(_mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy(exampleWeightColumnName: "Weight"))
                 .Append(_mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
 
             var trainedModel = pipeline.Fit(data);
