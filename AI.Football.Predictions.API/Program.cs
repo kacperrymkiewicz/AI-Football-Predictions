@@ -36,6 +36,7 @@ builder.Services.AddSingleton<IMatchPredictionService, MatchPredictionService>()
 
 builder.Services.AddScoped<MatchDataProcessor>();
 builder.Services.AddScoped<IMatchService, MatchService>();
+builder.Services.AddScoped<IPredictionDataService, PredictionDataService>();
 builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => 

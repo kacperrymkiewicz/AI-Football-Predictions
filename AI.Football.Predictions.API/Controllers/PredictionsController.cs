@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AI.Football.Predictions.API.Data;
 using AI.Football.Predictions.API.Services;
+using AI.Football.Predictions.API.Services.Interfaces;
 using AI.Football.Predictions.ML.Models;
 using AI.Football.Predictions.ML.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,12 +18,14 @@ namespace AI.Football.Predictions.API.Controllers
     {
         private readonly MatchDataProcessor _matchDataProcessor;
         private readonly IMatchPredictionService _matchPredictionService;
+        private readonly IPredictionDataService _predictionDataService;
         private readonly DataContext _context;
 
-        public PredictionsController(MatchDataProcessor matchDataProcessor, IMatchPredictionService matchPredictionService, DataContext context)
+        public PredictionsController(MatchDataProcessor matchDataProcessor, IMatchPredictionService matchPredictionService, IPredictionDataService predictionDataService, DataContext context)
         {
             _matchDataProcessor = matchDataProcessor;
             _matchPredictionService = matchPredictionService;
+            _predictionDataService = predictionDataService;
             _context = context;
         }
 
@@ -63,6 +66,13 @@ namespace AI.Football.Predictions.API.Controllers
 
             _matchPredictionService.Train(matchData);
             return Ok("Model został wytrenowany pomyślnie.");
+        }
+
+        [HttpGet("Accuracy")]
+        public async Task<IActionResult> GetPredictionStatistics()
+        {
+            var predictionAccuracy = await _predictionDataService.GetPredictionAccuracy();
+            return Ok(predictionAccuracy);
         }
 
     }

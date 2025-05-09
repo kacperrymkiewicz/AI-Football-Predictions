@@ -9,11 +9,15 @@ import { MatchCountdownComponent } from "./match-countdown/match-countdown.compo
 import { slugify } from '../../core/utils/slugify';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MAT_RIPPLE_GLOBAL_OPTIONS } from '@angular/material/core';
 
 @Component({
   selector: 'app-match-details',
   standalone: true,
   imports: [MatchDatePipe, MatchCountdownComponent, RouterLink, MatTabsModule, MatButtonModule],
+  providers: [
+    { provide: MAT_RIPPLE_GLOBAL_OPTIONS, useValue: { disabled: true } }
+  ],
   templateUrl: './match-details.component.html',
   styleUrl: './match-details.component.scss'
 })
