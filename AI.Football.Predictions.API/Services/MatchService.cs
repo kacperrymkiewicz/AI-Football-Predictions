@@ -24,7 +24,7 @@ namespace AI.Football.Predictions.API.Services
     {
         var match = await _sportradarService.GetMatchDetailsById(matchId);
         var relevantMatches = await _sportradarService.GetHead2HeadMatchesById(matchId);
-        var (h2hHomeWins, h2hAwayWins, h2hDraws) = _matchDataProcessor.CalculateHead2HeadStatistics(relevantMatches.Game.H2hGames, match.Game.HomeCompetitor.Id, match.Game.AwayCompetitor.Id);
+        var h2hProcessedData = await _matchDataProcessor.CalculateHead2HeadStatistics(relevantMatches.Game.H2hGames, match.Game.HomeCompetitor.Id, match.Game.AwayCompetitor.Id);
 
         TeamRecentStatistics homeStatistics = await _matchDataProcessor.CalculateRecentStatistics(relevantMatches.Game.HomeCompetitor.RecentGames, match.Game.HomeCompetitor.Id);
         TeamRecentStatistics awayStatistics = await _matchDataProcessor.CalculateRecentStatistics(relevantMatches.Game.AwayCompetitor.RecentGames, match.Game.AwayCompetitor.Id);
@@ -39,12 +39,12 @@ namespace AI.Football.Predictions.API.Services
             AwayShotsAvg = awayStatistics.AvgShots,
             HomeWinRate = homeStatistics.WinRate,
             AwayWinRate = awayStatistics.WinRate,
-            H2HHomeWins = h2hHomeWins,
-            H2HAwayWins = h2hAwayWins,
-            H2HDraws = h2hDraws,
-            H2HHomeWinRate = h2hHomeWins == 0 ? 0 : (float) h2hHomeWins / (h2hHomeWins + h2hAwayWins + h2hDraws),
-            H2HAwayWinRate = h2hAwayWins == 0 ? 0 : (float) h2hAwayWins / (h2hHomeWins + h2hAwayWins + h2hDraws),
-            H2HDrawRate = h2hDraws == 0 ? 0 : (float) h2hDraws / (h2hHomeWins + h2hAwayWins + h2hDraws),
+            H2HHomeWins = h2hProcessedData.H2HHomeWins,
+            H2HAwayWins = h2hProcessedData.H2HAwayWins,
+            H2HDraws = h2hProcessedData.H2HDraws,
+            H2HHomeWinRate = h2hProcessedData.H2HHomeWins == 0 ? 0 : (float) h2hProcessedData.H2HHomeWins / (h2hProcessedData.H2HHomeWins + h2hProcessedData.H2HAwayWins + h2hProcessedData.H2HDraws),
+            H2HAwayWinRate = h2hProcessedData.H2HAwayWins == 0 ? 0 : (float) h2hProcessedData.H2HAwayWins / (h2hProcessedData.H2HHomeWins + h2hProcessedData.H2HAwayWins + h2hProcessedData.H2HDraws),
+            H2HDrawRate = h2hProcessedData.H2HDraws == 0 ? 0 : (float) h2hProcessedData.H2HDraws / (h2hProcessedData.H2HHomeWins + h2hProcessedData.H2HAwayWins + h2hProcessedData.H2HDraws),
         };
     }
   }

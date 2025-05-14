@@ -29,6 +29,9 @@ namespace AI.Football.Predictions.API.Models
         public float H2HAwayWinRate => H2HAwayWins == 0 ? 0 : (float) H2HAwayWins / (H2HHomeWins + H2HAwayWins + H2HDraws);
         public float H2HDrawRate => H2HDraws == 0 ? 0 : (float) H2HDraws / (H2HHomeWins + H2HAwayWins + H2HDraws);
 
+        public H2HRecentStatistics H2HHomeStatistics { get; set; }
+        public H2HRecentStatistics H2HAwayStatistics { get; set; }
+
         public Result Result { get; set; }
 
         public override string ToString()
