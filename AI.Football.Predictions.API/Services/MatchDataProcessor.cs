@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using AI.Football.Predictions.API.Data;
@@ -179,8 +180,8 @@ namespace AI.Football.Predictions.API.Services
             ProcessSingleStat(statistics, teamId, 10, "Possession", statDict, s => (float)s.ValuePercentage);
             ProcessSingleStat(statistics, teamId, 3, "Shots", statDict, s => float.TryParse(s.Value, out var result) ? result : 0f);
             ProcessSingleStat(statistics, teamId, 12, "Fouls", statDict, s => float.TryParse(s.Value, out var result) ? result : 0f);
-            ProcessSingleStat(statistics, teamId, 76, "xG", statDict, s => float.TryParse(s.Value, out var result) ? result : 0f);
-            ProcessSingleStat(statistics, teamId, 77, "xGA", statDict, s => float.TryParse(s.Value, out var result) ? result : 0f);
+            ProcessSingleStat(statistics, teamId, 76, "xG", statDict, s => float.TryParse(s.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result) ? result : 0f);
+            ProcessSingleStat(statistics, teamId, 77, "xGA", statDict, s => float.TryParse(s.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result) ? result : 0f);
             ProcessSingleStat(statistics, teamId, 24, "BigChances", statDict, s => float.TryParse(s.Value, out var result) ? result : 0f);
             ProcessSingleStat(statistics, teamId, 4, "ShotsOnTarget", statDict, s => float.TryParse(s.Value, out var result) ? result : 0f);
             ProcessSingleStat(statistics, teamId, 8, "Corners", statDict, s => float.TryParse(s.Value, out var result) ? result : 0f);
@@ -197,6 +198,10 @@ namespace AI.Football.Predictions.API.Services
             {
                 var extractedValue = valueExtractor(stat);
                 statDict[statKey] = (statDict[statKey].sum + extractedValue, statDict[statKey].count + 1);
+                if(statId == 76 || statId == 77)
+                {
+                    Console.WriteLine(extractedValue);
+                }
             }
         }
 
