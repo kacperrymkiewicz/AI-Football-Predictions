@@ -36,10 +36,10 @@ namespace AI.Football.Predictions.ML.Services
                 .Append(_mlContext.Transforms.Concatenate("Features", 
                     nameof(MatchData.HomeGoalsAvg),
                     nameof(MatchData.AwayGoalsAvg), 
-                    // nameof(MatchData.HomePossessionAvg),
-                    // nameof(MatchData.AwayPossessionAvg), 
-                    // nameof(MatchData.HomeShotsAvg),
-                    // nameof(MatchData.AwayShotsAvg), 
+                    nameof(MatchData.HomePossessionAvg),
+                    nameof(MatchData.AwayPossessionAvg), 
+                    nameof(MatchData.HomeShotsAvg),
+                    nameof(MatchData.AwayShotsAvg), 
                     nameof(MatchData.HomeAvgXG), 
                     nameof(MatchData.AwayAvgXG), 
                     nameof(MatchData.HomeAvgXGA), 
@@ -60,13 +60,13 @@ namespace AI.Football.Predictions.ML.Services
                     nameof(MatchData.H2HAwayAvgBigChances),
                     // nameof(MatchData.H2HHomeAvgCorners),
                     // nameof(MatchData.H2HAwayAvgCorners),
-                    // nameof(MatchData.H2HHomeAvgFreeKicks),
-                    // nameof(MatchData.H2HAwayAvgFreeKicks),
+                    nameof(MatchData.H2HHomeAvgFreeKicks),
+                    nameof(MatchData.H2HAwayAvgFreeKicks),
                     nameof(MatchData.H2HHomeAvgRedCards),
                     nameof(MatchData.H2HAwayAvgRedCards)))
-                // .Append(_mlContext.Transforms.NormalizeMeanVariance("Features", "Features"))
                 .Append(_mlContext.Transforms.NormalizeMinMax("Features", "Features"))
-                .Append(_mlContext.MulticlassClassification.Trainers.LbfgsMaximumEntropy("Label", "Features"))
+                .Append(_mlContext.Transforms.NormalizeLogMeanVariance("Features", "Features"))
+                .Append(_mlContext.MulticlassClassification.Trainers.LbfgsMaximumEntropy("Label", "Features", exampleWeightColumnName: "Weight"))
                 .Append(_mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
 
             var trainedModel = pipeline.Fit(data);
