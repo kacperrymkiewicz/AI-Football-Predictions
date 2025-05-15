@@ -115,6 +115,14 @@ namespace AI.Football.Predictions.API.Controllers
             return Ok(prediction);
         }
 
+        [HttpPost("{id}/Predict/Data", Name = "GetPredictionDataById")]
+        [EndpointSummary("Gets data prediction by matchId")]
+        public async Task<ActionResult<MatchData>> PredictionDataById(int id)
+        {
+            var matchPredictionData = await _matchService.GetMatchPredictionDataById(id);
+            return Ok(matchPredictionData);
+        }
+
         [HttpPost("Predict", Name = "GetMatchPrediction")]
         [EndpointSummary("Gets match prediction")]
         public ActionResult<MatchPrediction> Predict([FromBody] MatchData matchData)

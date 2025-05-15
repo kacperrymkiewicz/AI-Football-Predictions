@@ -16,11 +16,13 @@ namespace AI.Football.Predictions.API.Services
     public class MatchDataProcessor
     {
         private readonly DataContext _context;
+        private readonly ILogger<MatchDataProcessor> _logger;
         private readonly ISportradarApiService _sportradarService;
 
-        public MatchDataProcessor(DataContext context, ISportradarApiService sportradarService)
+        public MatchDataProcessor(DataContext context, ISportradarApiService sportradarService, ILogger<MatchDataProcessor> logger)
         {
             _context = context;
+            _logger = logger;
             _sportradarService = sportradarService;
         }
 
@@ -29,7 +31,7 @@ namespace AI.Football.Predictions.API.Services
             var trainingDataList = new List<HistoricalMatch>();
 
             var endDate = DateTime.UtcNow;
-            var startDate = endDate.AddYears(-1);
+            var startDate = endDate.AddYears(-3);
             for (var currentStartDate = startDate; currentStartDate < endDate; currentStartDate = currentStartDate.AddMonths(1))
             {
                 var currentEndDate = currentStartDate.AddMonths(1).AddDays(-1);
@@ -38,41 +40,48 @@ namespace AI.Football.Predictions.API.Services
                 if(matches.Games == null)
                     continue;
 
-                foreach (var match in matches.Games) 
+                foreach (var match in matches.Games)
                 {
-                    var relevantMatches = await _sportradarService.GetHead2HeadMatchesById(match.Id);
-                    var h2hProcessedData = await CalculateHead2HeadStatistics(relevantMatches.Game.H2hGames, match.HomeCompetitor.Id, match.AwayCompetitor.Id);
-
-                    var historicalMatch = new HistoricalMatch 
+                    try
                     {
-                        MatchDate = match.StartTime,
-                        MatchId = match.Id,
-                        HomeCompetitor = new Team
-                        {
-                            Name = match.HomeCompetitor.Name,
-                            Score = (int) match.HomeCompetitor.Score,
-                            IsWinner = match.HomeCompetitor.Score > match.AwayCompetitor.Score
-                        },
-                        HomeStatistics = await CalculateRecentStatistics(relevantMatches.Game.HomeCompetitor.RecentGames, match.HomeCompetitor.Id),
-                        AwayCompetitor = new Team
-                        {
-                            Name = match.AwayCompetitor.Name,
-                            Score = (int) match.AwayCompetitor.Score,
-                            IsWinner = match.AwayCompetitor.Score > match.HomeCompetitor.Score
-                        },
-                        AwayStatistics = await CalculateRecentStatistics(relevantMatches.Game.AwayCompetitor.RecentGames, match.AwayCompetitor.Id),
-                        H2HHomeWins = h2hProcessedData.H2HHomeWins,
-                        H2HAwayWins = h2hProcessedData.H2HAwayWins,
-                        H2HDraws = h2hProcessedData.H2HDraws,
-                        
-                        H2HHomeStatistics = h2hProcessedData.H2HHomeStatistics,
-                        H2HAwayStatistics = h2hProcessedData.H2HAwayStatistics,
+                        var relevantMatches = await _sportradarService.GetHead2HeadMatchesById(match.Id);
+                        var h2hProcessedData = await CalculateHead2HeadStatistics(relevantMatches.Game.H2hGames, match.HomeCompetitor.Id, match.AwayCompetitor.Id);
 
-                        Result = MatchResultHelper.GetResult((int) match.HomeCompetitor.Score, (int) match.AwayCompetitor.Score)
-                    };
+                        var historicalMatch = new HistoricalMatch
+                        {
+                            MatchDate = match.StartTime,
+                            MatchId = match.Id,
+                            HomeCompetitor = new Team
+                            {
+                                Name = match.HomeCompetitor.Name,
+                                Score = (int)match.HomeCompetitor.Score,
+                                IsWinner = match.HomeCompetitor.Score > match.AwayCompetitor.Score
+                            },
+                            HomeStatistics = await CalculateRecentStatistics(relevantMatches.Game.HomeCompetitor.RecentGames, match.HomeCompetitor.Id),
+                            AwayCompetitor = new Team
+                            {
+                                Name = match.AwayCompetitor.Name,
+                                Score = (int)match.AwayCompetitor.Score,
+                                IsWinner = match.AwayCompetitor.Score > match.HomeCompetitor.Score
+                            },
+                            AwayStatistics = await CalculateRecentStatistics(relevantMatches.Game.AwayCompetitor.RecentGames, match.AwayCompetitor.Id),
+                            H2HHomeWins = h2hProcessedData.H2HHomeWins,
+                            H2HAwayWins = h2hProcessedData.H2HAwayWins,
+                            H2HDraws = h2hProcessedData.H2HDraws,
 
-                    trainingDataList.Add(historicalMatch);
-                    Console.WriteLine(historicalMatch.ToString());
+                            H2HHomeStatistics = h2hProcessedData.H2HHomeStatistics,
+                            H2HAwayStatistics = h2hProcessedData.H2HAwayStatistics,
+
+                            Result = MatchResultHelper.GetResult((int)match.HomeCompetitor.Score, (int)match.AwayCompetitor.Score)
+                        };
+
+                        trainingDataList.Add(historicalMatch);
+                        _logger.LogInformation("✅ Successfully processed match {MatchId}: {HistoricalMatch}", match.Id, historicalMatch.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning("⚠️ Omitted match {MatchId} due to an fetching error: {Message}", match.Id, ex.Message);
+                    }
                 };
             }
 
@@ -86,7 +95,7 @@ namespace AI.Football.Predictions.API.Services
             int wins = 0, draws = 0, losses = 0, processedGames = 0;
             float totalGoals = 0;
 
-            foreach (var recentGame in recentGames.Take(5))
+            foreach (var recentGame in recentGames.Take(8))
             {
                 var matchStatistics = await _sportradarService.GetMatchStatisticsById(recentGame.Id);
                 bool isHome = recentGame.HomeCompetitor.Id == teamId;
@@ -112,10 +121,12 @@ namespace AI.Football.Predictions.API.Services
                 Wins = wins,
                 Draws = draws,
                 Losses = losses,
-                AvgGoals = processedGames == 0 ? 0 : totalGoals / processedGames,
-                AvgShots = processedStatistics["Shots"].count == 0 ? 0 : processedStatistics["Shots"].sum / processedStatistics["Shots"].count,
-                AvgPossession = processedStatistics["Possession"].count == 0 ? 0 : processedStatistics["Possession"].sum / processedStatistics["Possession"].count,
-                AvgFouls = processedStatistics["Fouls"].count == 0 ? 0 : processedStatistics["Fouls"].sum / processedStatistics["Fouls"].count
+                AvgGoals = SafeAverage(totalGoals, processedGames),
+                AvgShots = SafeAverage(processedStatistics["Shots"].sum, processedStatistics["Shots"].count),
+                AvgPossession = SafeAverage(processedStatistics["Possession"].sum, processedStatistics["Possession"].count),
+                AvgFouls = SafeAverage(processedStatistics["Fouls"].sum, processedStatistics["Fouls"].count),
+                AvgXG = SafeAverage(processedStatistics["xG"].sum, processedStatistics["xG"].count),
+                AvgXGA = SafeAverage(processedStatistics["xGA"].sum, processedStatistics["xGA"].count),
             };
         }
 
@@ -126,7 +137,7 @@ namespace AI.Football.Predictions.API.Services
             int h2hHomeWins = 0, h2hAwayWins = 0, h2hDraws = 0, processedGames = 0;
             float totalHomeGoals = 0, totalAwayGoals = 0;
 
-            foreach (var match in h2hMatches.Take(10))
+            foreach (var match in h2hMatches.Take(15))
             {
                 bool isHome = match.HomeCompetitor.Id == homeTeamId;
                 bool isAway = match.AwayCompetitor.Id == awayTeamId;

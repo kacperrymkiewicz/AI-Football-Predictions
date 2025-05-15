@@ -23,7 +23,7 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
             var dateFrom = startDate.ToString("dd'/'MM'/'yyyy", System.Globalization.CultureInfo.InvariantCulture);
             var dateTo = endDate.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
 
-            var response = await _client.GetAsync($"web/games/myscores/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&competitions=572,11,25,7,156,153,8268,573,332&startDate={dateFrom}&endDate={dateTo}&showOdds=true&topBookmaker=151");
+            var response = await _client.GetAsync($"web/games/myscores/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&competitions=572,11,25,7,156,153,8268,573,332,17,35&startDate={dateFrom}&endDate={dateTo}&showOdds=true&topBookmaker=151");
 
             if (!response.IsSuccessStatusCode)
                 throw new Exception("Error fetching matches");
@@ -43,7 +43,7 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
             var dateFrom = DateTime.UtcNow.ToString("dd'/'MM'/'yyyy");
             var dateTo = DateTime.UtcNow.AddDays(3).ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
 
-            var response = await client.GetAsync($"web/games/myscores/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&competitions=572,11,25,7,156,153,8268,573,332&startDate={dateFrom}&endDate={dateTo}&showOdds=true&topBookmaker=151");
+            var response = await client.GetAsync($"web/games/myscores/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&competitions=572,11,25,7,156,153,8268,573,332,17,35&startDate={dateFrom}&endDate={dateTo}&showOdds=true&topBookmaker=151");
 
             if (!response.IsSuccessStatusCode)
                 throw new Exception("Error fetching live matches");

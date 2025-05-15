@@ -1,5 +1,6 @@
 ﻿using AI.Football.Predictions.ML.Models;
 using Microsoft.ML;
+using Microsoft.ML.Transforms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace AI.Football.Predictions.ML.Services
         public void Train(IEnumerable<MatchData> matchData)
         {
             var data = _mlContext.Data.LoadFromEnumerable(matchData);
-            var pipeline = _mlContext.Transforms.Conversion.MapValueToKey("Label")
+            var pipeline = _mlContext.Transforms.Conversion.MapValueToKey("Label", keyOrdinality: ValueToKeyMappingEstimator.KeyOrdinality.ByValue)
                 .Append(_mlContext.Transforms.Concatenate("Features", 
                     nameof(MatchData.HomeGoalsAvg),
                     nameof(MatchData.AwayGoalsAvg), 
@@ -39,6 +40,10 @@ namespace AI.Football.Predictions.ML.Services
                     // nameof(MatchData.AwayPossessionAvg), 
                     // nameof(MatchData.HomeShotsAvg),
                     // nameof(MatchData.AwayShotsAvg), 
+                    nameof(MatchData.HomeAvgXG), 
+                    nameof(MatchData.AwayAvgXG), 
+                    nameof(MatchData.HomeAvgXGA), 
+                    nameof(MatchData.AwayAvgXGA), 
                     nameof(MatchData.HomeWinRate),
                     nameof(MatchData.AwayWinRate), 
                     nameof(MatchData.H2HHomeWins),
@@ -46,9 +51,22 @@ namespace AI.Football.Predictions.ML.Services
                     nameof(MatchData.H2HDraws),
                     nameof(MatchData.H2HHomeWinRate), 
                     nameof(MatchData.H2HAwayWinRate), 
-                    nameof(MatchData.H2HDrawRate)))
+                    nameof(MatchData.H2HDrawRate),
+                    nameof(MatchData.H2HHomeAvgXG),
+                    nameof(MatchData.H2HHomeAvgXGA),
+                    nameof(MatchData.H2HAwayAvgXG),
+                    nameof(MatchData.H2HAwayAvgXGA),
+                    nameof(MatchData.H2HHomeAvgBigChances),
+                    nameof(MatchData.H2HAwayAvgBigChances),
+                    // nameof(MatchData.H2HHomeAvgCorners),
+                    // nameof(MatchData.H2HAwayAvgCorners),
+                    // nameof(MatchData.H2HHomeAvgFreeKicks),
+                    // nameof(MatchData.H2HAwayAvgFreeKicks),
+                    nameof(MatchData.H2HHomeAvgRedCards),
+                    nameof(MatchData.H2HAwayAvgRedCards)))
+                // .Append(_mlContext.Transforms.NormalizeMeanVariance("Features", "Features"))
                 .Append(_mlContext.Transforms.NormalizeMinMax("Features", "Features"))
-                .Append(_mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy(exampleWeightColumnName: "Weight"))
+                .Append(_mlContext.MulticlassClassification.Trainers.LbfgsMaximumEntropy("Label", "Features"))
                 .Append(_mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
 
             var trainedModel = pipeline.Fit(data);
@@ -60,7 +78,6 @@ namespace AI.Football.Predictions.ML.Services
         {
             if (_model == null)
                 throw new InvalidOperationException("Model was not loaded!");
-
 
             var predictionEngine = _mlContext.Model.CreatePredictionEngine<MatchData, MatchPrediction>(_model);
             return predictionEngine.Predict(matchData);
