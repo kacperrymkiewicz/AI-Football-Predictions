@@ -158,8 +158,8 @@ namespace AI.Football.Predictions.API.Services
                 }
             }
 
-            H2HRecentStatistics h2hHomeStatistics = CreateH2HStatistics(homeProcessedStatistics, totalHomeGoals / processedGames);
-            H2HRecentStatistics h2hAwayStatistics = CreateH2HStatistics(awayProcessedStatistics, totalAwayGoals / processedGames);
+            H2HRecentStatistics h2hHomeStatistics = CreateH2HStatistics(homeProcessedStatistics, SafeAverage(totalHomeGoals, processedGames));
+            H2HRecentStatistics h2hAwayStatistics = CreateH2HStatistics(awayProcessedStatistics, SafeAverage(totalAwayGoals, processedGames));
 
             return new H2HProcessedData
             {
@@ -198,10 +198,6 @@ namespace AI.Football.Predictions.API.Services
             {
                 var extractedValue = valueExtractor(stat);
                 statDict[statKey] = (statDict[statKey].sum + extractedValue, statDict[statKey].count + 1);
-                if(statId == 76 || statId == 77)
-                {
-                    Console.WriteLine(extractedValue);
-                }
             }
         }
 
@@ -210,16 +206,16 @@ namespace AI.Football.Predictions.API.Services
             return new H2HRecentStatistics
             {
                 AvgGoals = avgGoals,
-                AvgShots = stats["Shots"].count == 0 ? 0 : stats["Shots"].sum / stats["Shots"].count,
-                AvgPossession = stats["Possession"].count == 0 ? 0 : stats["Possession"].sum / stats["Possession"].count,
-                AvgFouls = stats["Fouls"].count == 0 ? 0 : stats["Fouls"].sum / stats["Fouls"].count,
-                AvgXG = stats["xG"].count == 0 ? 0 : stats["xG"].sum / stats["xG"].count,
-                AvgXGA = stats["xGA"].count == 0 ? 0 : stats["xGA"].sum / stats["xGA"].count,
-                AvgBigChances = stats["BigChances"].count == 0 ? 0 : stats["BigChances"].sum / stats["BigChances"].count,
-                AvgShotsOnTarget = stats["ShotsOnTarget"].count == 0 ? 0 : stats["ShotsOnTarget"].sum / stats["ShotsOnTarget"].count,
-                AvgCorners = stats["Corners"].count == 0 ? 0 : stats["Corners"].sum / stats["Corners"].count,
-                AvgFreeKicks = stats["FreeKicks"].count == 0 ? 0 : stats["FreeKicks"].sum / stats["FreeKicks"].count,
-                AvgRedCards = stats["RedCards"].count == 0 ? 0 : stats["RedCards"].sum / stats["RedCards"].count
+                AvgShots = SafeAverage(stats["Shots"].sum, stats["Shots"].count),
+                AvgPossession = SafeAverage(stats["Possession"].sum, stats["Possession"].count),
+                AvgFouls = SafeAverage(stats["Fouls"].sum, stats["Fouls"].count),
+                AvgXG = SafeAverage(stats["xG"].sum, stats["xG"].count),
+                AvgXGA = SafeAverage(stats["xGA"].sum, stats["xGA"].count),
+                AvgBigChances = SafeAverage(stats["BigChances"].sum, stats["BigChances"].count),
+                AvgShotsOnTarget = SafeAverage(stats["ShotsOnTarget"].sum, stats["ShotsOnTarget"].count),
+                AvgCorners = SafeAverage(stats["Corners"].sum, stats["Corners"].count),
+                AvgFreeKicks = SafeAverage(stats["FreeKicks"].sum, stats["FreeKicks"].count),
+                AvgRedCards = SafeAverage(stats["RedCards"].sum, stats["RedCards"].count)
             };
         }
 
@@ -248,6 +244,13 @@ namespace AI.Football.Predictions.API.Services
                 { "FreeKicks", (0, 0) },
                 { "RedCards", (0, 0) }
             };
+        }
+
+        private float SafeAverage(float sum, int count)
+        {
+            if (count == 0) return 0;
+            float result = sum / count;
+            return float.IsNaN(result) || float.IsInfinity(result) ? 0 : result;
         }
     }
 }
