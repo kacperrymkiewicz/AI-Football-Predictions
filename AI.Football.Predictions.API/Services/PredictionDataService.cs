@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AI.Football.Predictions.API.Data;
+using AI.Football.Predictions.API.Mappings;
 using AI.Football.Predictions.API.Models;
 using AI.Football.Predictions.API.Services.Interfaces;
 using AI.Football.Predictions.ML.Models;
@@ -26,28 +27,16 @@ namespace AI.Football.Predictions.API.Services
 
         public async Task<PredictionAccuracy> GetPredictionAccuracy()
         {
-            var matchData = await _context.HistoricalMatches.ToListAsync();
+            var matchData = await _context.HistoricalMatches
+                .Include(m => m.HomeCompetitor)
+                .Include(m => m.AwayCompetitor)
+                .AsNoTracking()
+                .ToListAsync();
             var predictionAccuracy = new PredictionAccuracy();
 
             foreach (var match in matchData)
             {
-                MatchData predictionData = new MatchData
-                {
-                    HomeGoalsAvg = match.HomeStatistics.AvgGoals,
-                    AwayGoalsAvg = match.AwayStatistics.AvgGoals,
-                    HomePossessionAvg = match.HomeStatistics.AvgPossession,
-                    AwayPossessionAvg = match.AwayStatistics.AvgPossession,
-                    HomeShotsAvg = match.HomeStatistics.AvgShots,
-                    AwayShotsAvg = match.AwayStatistics.AvgShots,
-                    HomeWinRate = match.HomeStatistics.WinRate,
-                    AwayWinRate = match.AwayStatistics.WinRate,
-                    H2HHomeWins = match.H2HHomeWins,
-                    H2HAwayWins = match.H2HAwayWins,
-                    H2HDraws = match.H2HDraws,
-                    H2HHomeWinRate = match.H2HHomeWinRate,
-                    H2HAwayWinRate = match.H2HAwayWinRate,
-                    H2HDrawRate = match.H2HDrawRate
-                };
+                MatchData predictionData = MatchDataMapper.FromHistoricalMatch(match);
             
                 var prediction = _matchPredictionService.Predict(predictionData);
                 predictionAccuracy.TotalPredictions++;
