@@ -106,7 +106,7 @@ namespace AI.Football.Predictions.API.Controllers
             }
         }
 
-        [HttpPost("{id}/Predict", Name = "GetMatchPredictionById")]
+        [HttpGet("{id}/Predict", Name = "GetMatchPredictionById")]
         [EndpointSummary("Gets match prediction by matchId")]
         public async Task<ActionResult<MatchPrediction>> PredictById(int id)
         {
@@ -115,7 +115,7 @@ namespace AI.Football.Predictions.API.Controllers
             return Ok(prediction);
         }
 
-        [HttpPost("{id}/Prediction-data", Name = "GetPredictionDataById")]
+        [HttpGet("{id}/Prediction-data", Name = "GetPredictionDataById")]
         [EndpointSummary("Gets data prediction by matchId")]
         public async Task<ActionResult<MatchData>> PredictionDataById(int id)
         {

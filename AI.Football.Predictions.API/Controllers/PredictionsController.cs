@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AI.Football.Predictions.API.Data;
+using AI.Football.Predictions.API.Mappings;
 using AI.Football.Predictions.API.Models;
 using AI.Football.Predictions.API.Services;
 using AI.Football.Predictions.API.Services.Interfaces;
@@ -41,43 +42,11 @@ namespace AI.Football.Predictions.API.Controllers
         public async Task<IActionResult> TrainModel()
         {
             var matchData = await _context.HistoricalMatches
+                .Include(m => m.HomeCompetitor)
+                .Include(m => m.AwayCompetitor)
                 .AsNoTracking()
-                .Select(m => new MatchData
-                {
-                    HomeGoalsAvg = m.HomeStatistics.AvgGoals,
-                    AwayGoalsAvg = m.AwayStatistics.AvgGoals,
-                    HomePossessionAvg = m.HomeStatistics.AvgPossession,
-                    AwayPossessionAvg = m.AwayStatistics.AvgPossession,
-                    HomeShotsAvg = m.HomeStatistics.AvgShots,
-                    AwayShotsAvg = m.AwayStatistics.AvgShots,
-                    HomeAvgXG = m.HomeStatistics.AvgXG,
-                    AwayAvgXG = m.AwayStatistics.AvgXG,
-                    HomeAvgXGA = m.HomeStatistics.AvgXGA,
-                    AwayAvgXGA = m .AwayStatistics.AvgXGA,
-                    HomeWinRate = m.HomeStatistics.WinRate,
-                    AwayWinRate = m.AwayStatistics.WinRate,
-                    H2HHomeWins = m.H2HHomeWins,
-                    H2HAwayWins = m.H2HAwayWins,
-                    H2HDraws = m.H2HDraws,
-                    H2HHomeWinRate = m.H2HHomeWinRate,
-                    H2HAwayWinRate = m.H2HAwayWinRate,
-                    H2HDrawRate = m.H2HDrawRate,
-                    H2HHomeAvgXG = m.H2HHomeStatistics.AvgXG,
-                    H2HHomeAvgXGA = m.H2HHomeStatistics.AvgXGA,
-                    H2HAwayAvgXG = m.H2HAwayStatistics.AvgXG,
-                    H2HAwayAvgXGA = m.H2HAwayStatistics.AvgXGA,
-                    H2HHomeAvgBigChances = m.H2HHomeStatistics.AvgBigChances,
-                    H2HAwayAvgBigChances = m.H2HAwayStatistics.AvgBigChances,
-                    H2HHomeAvgCorners = m.H2HHomeStatistics.AvgCorners,
-                    H2HAwayAvgCorners = m.H2HAwayStatistics.AvgCorners,
-                    H2HHomeAvgFreeKicks = m.H2HHomeStatistics.AvgFreeKicks,
-                    H2HAwayAvgFreeKicks = m.H2HAwayStatistics.AvgFreeKicks,
-                    H2HHomeAvgRedCards = m.H2HHomeStatistics.AvgRedCards,
-                    H2HAwayAvgRedCards = m.H2HAwayStatistics.AvgRedCards,
-                    HomeScore = m.HomeCompetitor.Score,
-                    AwayScore = m.AwayCompetitor.Score,
-                    MatchResult = (uint)m.Result
-                }).ToListAsync();
+                .Select(m => MatchDataMapper.FromHistoricalMatch(m))
+                .ToListAsync();
 
             if (matchData == null || !matchData.Any())
             {
