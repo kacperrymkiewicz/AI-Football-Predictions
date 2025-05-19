@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using AI.Football.Predictions.Integrations.Sportradar.Models;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace AI.Football.Predictions.Integrations.Sportradar.Services
 {
@@ -20,10 +21,23 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
 
         public async Task<SportradarResponse> GetMatches(DateTime startDate, DateTime endDate)
         {
-            var dateFrom = startDate.ToString("dd'/'MM'/'yyyy", System.Globalization.CultureInfo.InvariantCulture);
+            var dateFrom = startDate.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
             var dateTo = endDate.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
 
-            var response = await _client.GetAsync($"web/games/myscores/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&competitions=572,11,25,7,156,153,8268,573,332,17,35&startDate={dateFrom}&endDate={dateTo}&showOdds=true&topBookmaker=151");
+            var queryParams = new Dictionary<string, string?>
+            {
+                ["appTypeId"] = "5",
+                ["langId"] = "35",
+                ["timezoneName"] = "Europe/Warsaw",
+                ["competitions"] = "572,11,25,7,156,153,8268,573,332,17,35",
+                ["startDate"] = dateFrom,
+                ["endDate"] = dateTo,
+                ["showOdds"] = "true",
+                ["topBookmaker"] = "151"
+            };
+
+            var url = QueryHelpers.AddQueryString("web/games/myscores/", queryParams);
+            var response = await _client.GetAsync(url);
 
             if (!response.IsSuccessStatusCode)
                 throw new Exception("Error fetching matches");
