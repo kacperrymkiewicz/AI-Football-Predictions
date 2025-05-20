@@ -43,7 +43,8 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
                 throw new Exception("Error fetching matches");
 
             var content = await response.Content.ReadAsStringAsync();
-            var deserializedResponse = JsonSerializer.Deserialize<SportradarResponse>(content, new JsonSerializerOptions {
+            var deserializedResponse = JsonSerializer.Deserialize<SportradarResponse>(content, new JsonSerializerOptions
+            {
                 PropertyNameCaseInsensitive = true
             });
 
@@ -63,14 +64,16 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
                 throw new Exception("Error fetching live matches");
 
             var content = await response.Content.ReadAsStringAsync();
-            var deserializedResponse = JsonSerializer.Deserialize<SportradarResponse>(content, new JsonSerializerOptions {
+            var deserializedResponse = JsonSerializer.Deserialize<SportradarResponse>(content, new JsonSerializerOptions
+            {
                 PropertyNameCaseInsensitive = true
             });
 
             return deserializedResponse!;
         }
 
-        public async Task<SportradarMatchDetailsResponse> GetMatchDetailsById(int gameId) {
+        public async Task<SportradarMatchDetailsResponse> GetMatchDetailsById(int gameId)
+        {
             var client = _httpClientFactory.CreateClient("Sportradar");
 
             var response = await client.GetAsync($"web/game/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&gameId={gameId}&topBookmaker=151");
@@ -79,14 +82,16 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
                 throw new Exception("Error fetching match details");
 
             var content = await response.Content.ReadAsStringAsync();
-            var deserializedResponse = JsonSerializer.Deserialize<SportradarMatchDetailsResponse>(content, new JsonSerializerOptions {
+            var deserializedResponse = JsonSerializer.Deserialize<SportradarMatchDetailsResponse>(content, new JsonSerializerOptions
+            {
                 PropertyNameCaseInsensitive = true
             });
 
             return deserializedResponse!;
         }
 
-        public async Task<SportradarMatchStatisticsResponse> GetMatchStatisticsById(int gameId) {
+        public async Task<SportradarMatchStatisticsResponse> GetMatchStatisticsById(int gameId)
+        {
             var client = _httpClientFactory.CreateClient("Sportradar");
 
             var response = await client.GetAsync($"web/game/stats/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&games={gameId}");
@@ -95,14 +100,16 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
                 throw new Exception("Error fetching match statistics");
 
             var content = await response.Content.ReadAsStringAsync();
-            var deserializedResponse = JsonSerializer.Deserialize<SportradarMatchStatisticsResponse>(content, new JsonSerializerOptions {
+            var deserializedResponse = JsonSerializer.Deserialize<SportradarMatchStatisticsResponse>(content, new JsonSerializerOptions
+            {
                 PropertyNameCaseInsensitive = true
             });
 
             return deserializedResponse!;
         }
 
-        public async Task<SportradarHead2HeadResponse> GetHead2HeadMatchesById(int gameId) {
+        public async Task<SportradarHead2HeadResponse> GetHead2HeadMatchesById(int gameId)
+        {
             var client = _httpClientFactory.CreateClient("Sportradar");
 
             var response = await client.GetAsync($"web/games/h2h/?appTypeId=5&langId=35&timezoneName=Europe/Warsaw&gameId={gameId}");
@@ -111,7 +118,8 @@ namespace AI.Football.Predictions.Integrations.Sportradar.Services
                 throw new Exception("Error fetching h2h matches");
 
             var content = await response.Content.ReadAsStringAsync();
-            var deserializedResponse = JsonSerializer.Deserialize<SportradarHead2HeadResponse>(content, new JsonSerializerOptions {
+            var deserializedResponse = JsonSerializer.Deserialize<SportradarHead2HeadResponse>(content, new JsonSerializerOptions
+            {
                 PropertyNameCaseInsensitive = true
             });
 
