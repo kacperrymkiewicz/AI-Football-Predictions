@@ -53,7 +53,8 @@ AI-Football-Predictions
 ├── AI.Football.Predictions.ML             # Project ML - ML.NET
 ├── AI.Football.Predictions.Client         # Project Web - Angular
 └── AI.Football.Predictions.Integrations   # Project Integrations - External API integrations
-    └── FootballData                       # Integration with football-data.org
+    ├── FootballData                       # Integration with football-data.org
+    └── Sportradar                         # Integration with Sportradar
 ```
 
 ## Installation
