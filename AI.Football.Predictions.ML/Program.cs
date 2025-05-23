@@ -38,8 +38,8 @@ public class Program
             MatchResult = 0
         };
 
-        var prediction = service.Predict(sampleMatch);
-        Console.WriteLine($"Predicted Match Result: {prediction.PredictedResult}");
+        // var prediction = service.Predict(sampleMatch);
+        // Console.WriteLine($"Predicted Match Result: {prediction.PredictedResult}");
         //Console.WriteLine($"Confidence Scores: HomeWin={prediction.Score[0]:F2}, Draw={prediction.Score[1]:F2}, AwayWin={prediction.Score[2]:F2}");
     }
 }

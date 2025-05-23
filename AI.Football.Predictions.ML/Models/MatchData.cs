@@ -39,8 +39,8 @@ namespace AI.Football.Predictions.ML.Models
         public float H2HAwayAvgFreeKicks { get; set; }
         public float H2HHomeAvgRedCards { get; set; }
         public float H2HAwayAvgRedCards { get; set; }
-        public int HomeScore { get; set; }
-        public int AwayScore { get; set; }
+        public float HomeScore { get; set; }
+        public float AwayScore { get; set; }
         public float Weight => MatchResult == 2 ? 0.9f : 1f;
 
         [ColumnName("Label")]

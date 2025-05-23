@@ -53,7 +53,8 @@ namespace AI.Football.Predictions.API.Controllers
                 return BadRequest("Brak danych do trenowania modelu.");
             }
 
-            _matchPredictionService.Train(matchData);
+            _matchPredictionService.TrainRegression(matchData);
+            _matchPredictionService.TrainClassification(matchData);
             return Ok("Model został wytrenowany pomyślnie.");
         }
 
