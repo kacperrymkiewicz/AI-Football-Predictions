@@ -154,5 +154,73 @@ namespace AI.Football.Predictions.ML.Services
                 AwayScore = (int)Math.Round(away)
             };
         }
+
+        public MatchScorePrediction PredictScoreWithConsistency(MatchData matchData)
+        {
+            if (_homeRegressionModel == null || _awayRegressionModel == null)
+                throw new InvalidOperationException("Score regression models not loaded!");
+
+            var homePredictionEngine = _mlContext.Model.CreatePredictionEngine<MatchData, ScoreOutput>(_homeRegressionModel);
+            var awayPredictionEngine = _mlContext.Model.CreatePredictionEngine<MatchData, ScoreOutput>(_awayRegressionModel);
+
+            var predictedMatchResult = Predict(matchData).PredictedResult;
+            var home = homePredictionEngine.Predict(matchData).Score;
+            var away = awayPredictionEngine.Predict(matchData).Score;
+
+
+            Console.WriteLine($"Wynik przed korekcją: Home = {home:F2}, Away = {away:F2}, Typ meczu = {predictedMatchResult}");
+            var (homeScoreFinal, awayScoreFinal) = RoundScores(predictedMatchResult, home, away);
+            Console.WriteLine($"Wynik po korekcji: Home = {homeScoreFinal}, Away = {awayScoreFinal}");
+
+
+            return new MatchScorePrediction
+            {
+                HomeScore = homeScoreFinal,
+                AwayScore = awayScoreFinal
+            };
+        }
+
+        (int homeRounded, int awayRounded) RoundScores(uint matchResult, float homeScore, float awayScore)
+        {
+            int[] homeOptions = { (int)Math.Floor(homeScore), (int)Math.Round(homeScore), (int)Math.Ceiling(homeScore) };
+            int[] awayOptions = { (int)Math.Floor(awayScore), (int)Math.Round(awayScore), (int)Math.Ceiling(awayScore) };
+
+            // Pomocnicza funkcja sprawdzająca warunek zwycięstwa / remisu
+            bool IsValid(uint result, int h, int a)
+            {
+                return result switch
+                {
+                    0 => h > a,   // wygrana gospodarzy
+                    1 => h < a,   // wygrana gości
+                    2 => h == a,  // remis
+                    _ => true,
+                };
+            }
+
+            // Szukanie kombinacji, ktora spelnia warunek i minimalizuje sumę odchylen od oryginałow
+            (int, int) bestPair = (0, 0);
+            double bestDistance = double.MaxValue;
+
+            foreach (var h in homeOptions)
+            {
+                foreach (var a in awayOptions)
+                {
+                    if (IsValid(matchResult, h, a))
+                    {
+                        double dist = Math.Abs(homeScore - h) + Math.Abs(awayScore - a);
+                        if (dist < bestDistance)
+                        {
+                            bestDistance = dist;
+                            bestPair = (h, a);
+                        }
+                    }
+                }
+            }
+
+            if (bestDistance == double.MaxValue)
+                return ((int)Math.Round(homeScore), (int)Math.Round(awayScore));
+
+            return bestPair;
+        }
     }
 }

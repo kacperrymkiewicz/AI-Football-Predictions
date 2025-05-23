@@ -13,5 +13,6 @@ namespace AI.Football.Predictions.ML.Services
 
         void TrainRegression(IEnumerable<MatchData> matchData);
         MatchScorePrediction PredictScore(MatchData matchData);
+        MatchScorePrediction PredictScoreWithConsistency(MatchData matchData);
     }
 }

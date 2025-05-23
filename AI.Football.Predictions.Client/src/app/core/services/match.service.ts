@@ -67,4 +67,8 @@ export class MatchService {
   public getMatchPredictionById(matchId: number) {
     return this.http.getMatchPredictionById(matchId);
   }
+
+  public getMatchScorePredictionById(matchId: number) {
+    return this.http.getMatchScorePredictionById(matchId);
+  }
 }

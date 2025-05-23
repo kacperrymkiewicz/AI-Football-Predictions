@@ -473,6 +473,116 @@ export class Client {
     }
 
     /**
+     * Gets match score prediction by matchId
+     * @return OK
+     */
+    getMatchScorePredictionById(id: number): Observable<MatchScorePrediction> {
+        let url_ = this.baseUrl + "/api/Matches/{id}/Predict/Score";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMatchScorePredictionById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMatchScorePredictionById(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MatchScorePrediction>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MatchScorePrediction>;
+        }));
+    }
+
+    protected processGetMatchScorePredictionById(response: HttpResponseBase): Observable<MatchScorePrediction> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MatchScorePrediction.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * Gets data prediction by matchId
+     * @return OK
+     */
+    getPredictionDataById(id: number): Observable<MatchData> {
+        let url_ = this.baseUrl + "/api/Matches/{id}/Prediction-data";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPredictionDataById(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPredictionDataById(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<MatchData>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<MatchData>;
+        }));
+    }
+
+    protected processGetPredictionDataById(response: HttpResponseBase): Observable<MatchData> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MatchData.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
      * Gets match prediction
      * @param body (optional) 
      * @return OK
@@ -614,6 +724,57 @@ export class Client {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return _observableOf(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    accuracy(): Observable<PredictionAccuracy> {
+        let url_ = this.baseUrl + "/api/Predictions/Accuracy";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "json",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAccuracy(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAccuracy(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PredictionAccuracy>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PredictionAccuracy>;
+        }));
+    }
+
+    protected processAccuracy(response: HttpResponseBase): Observable<PredictionAccuracy> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PredictionAccuracy.fromJS(resultData200);
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -2171,11 +2332,33 @@ export class MatchData implements IMatchData {
     awayPossessionAvg?: number;
     homeShotsAvg?: number;
     awayShotsAvg?: number;
+    homeAvgXG?: number;
+    awayAvgXG?: number;
+    homeAvgXGA?: number;
+    awayAvgXGA?: number;
     homeWinRate?: number;
     awayWinRate?: number;
     h2HHomeWins?: number;
     h2HAwayWins?: number;
     h2HDraws?: number;
+    h2HHomeWinRate?: number;
+    h2HAwayWinRate?: number;
+    h2HDrawRate?: number;
+    h2HHomeAvgXG?: number;
+    h2HHomeAvgXGA?: number;
+    h2HAwayAvgXG?: number;
+    h2HAwayAvgXGA?: number;
+    h2HHomeAvgBigChances?: number;
+    h2HAwayAvgBigChances?: number;
+    h2HHomeAvgCorners?: number;
+    h2HAwayAvgCorners?: number;
+    h2HHomeAvgFreeKicks?: number;
+    h2HAwayAvgFreeKicks?: number;
+    h2HHomeAvgRedCards?: number;
+    h2HAwayAvgRedCards?: number;
+    homeScore?: number;
+    awayScore?: number;
+    readonly weight?: number;
     matchResult?: number;
 
     constructor(data?: IMatchData) {
@@ -2195,11 +2378,33 @@ export class MatchData implements IMatchData {
             this.awayPossessionAvg = _data["awayPossessionAvg"];
             this.homeShotsAvg = _data["homeShotsAvg"];
             this.awayShotsAvg = _data["awayShotsAvg"];
+            this.homeAvgXG = _data["homeAvgXG"];
+            this.awayAvgXG = _data["awayAvgXG"];
+            this.homeAvgXGA = _data["homeAvgXGA"];
+            this.awayAvgXGA = _data["awayAvgXGA"];
             this.homeWinRate = _data["homeWinRate"];
             this.awayWinRate = _data["awayWinRate"];
             this.h2HHomeWins = _data["h2HHomeWins"];
             this.h2HAwayWins = _data["h2HAwayWins"];
             this.h2HDraws = _data["h2HDraws"];
+            this.h2HHomeWinRate = _data["h2HHomeWinRate"];
+            this.h2HAwayWinRate = _data["h2HAwayWinRate"];
+            this.h2HDrawRate = _data["h2HDrawRate"];
+            this.h2HHomeAvgXG = _data["h2HHomeAvgXG"];
+            this.h2HHomeAvgXGA = _data["h2HHomeAvgXGA"];
+            this.h2HAwayAvgXG = _data["h2HAwayAvgXG"];
+            this.h2HAwayAvgXGA = _data["h2HAwayAvgXGA"];
+            this.h2HHomeAvgBigChances = _data["h2HHomeAvgBigChances"];
+            this.h2HAwayAvgBigChances = _data["h2HAwayAvgBigChances"];
+            this.h2HHomeAvgCorners = _data["h2HHomeAvgCorners"];
+            this.h2HAwayAvgCorners = _data["h2HAwayAvgCorners"];
+            this.h2HHomeAvgFreeKicks = _data["h2HHomeAvgFreeKicks"];
+            this.h2HAwayAvgFreeKicks = _data["h2HAwayAvgFreeKicks"];
+            this.h2HHomeAvgRedCards = _data["h2HHomeAvgRedCards"];
+            this.h2HAwayAvgRedCards = _data["h2HAwayAvgRedCards"];
+            this.homeScore = _data["homeScore"];
+            this.awayScore = _data["awayScore"];
+            (<any>this).weight = _data["weight"];
             this.matchResult = _data["matchResult"];
         }
     }
@@ -2219,11 +2424,33 @@ export class MatchData implements IMatchData {
         data["awayPossessionAvg"] = this.awayPossessionAvg;
         data["homeShotsAvg"] = this.homeShotsAvg;
         data["awayShotsAvg"] = this.awayShotsAvg;
+        data["homeAvgXG"] = this.homeAvgXG;
+        data["awayAvgXG"] = this.awayAvgXG;
+        data["homeAvgXGA"] = this.homeAvgXGA;
+        data["awayAvgXGA"] = this.awayAvgXGA;
         data["homeWinRate"] = this.homeWinRate;
         data["awayWinRate"] = this.awayWinRate;
         data["h2HHomeWins"] = this.h2HHomeWins;
         data["h2HAwayWins"] = this.h2HAwayWins;
         data["h2HDraws"] = this.h2HDraws;
+        data["h2HHomeWinRate"] = this.h2HHomeWinRate;
+        data["h2HAwayWinRate"] = this.h2HAwayWinRate;
+        data["h2HDrawRate"] = this.h2HDrawRate;
+        data["h2HHomeAvgXG"] = this.h2HHomeAvgXG;
+        data["h2HHomeAvgXGA"] = this.h2HHomeAvgXGA;
+        data["h2HAwayAvgXG"] = this.h2HAwayAvgXG;
+        data["h2HAwayAvgXGA"] = this.h2HAwayAvgXGA;
+        data["h2HHomeAvgBigChances"] = this.h2HHomeAvgBigChances;
+        data["h2HAwayAvgBigChances"] = this.h2HAwayAvgBigChances;
+        data["h2HHomeAvgCorners"] = this.h2HHomeAvgCorners;
+        data["h2HAwayAvgCorners"] = this.h2HAwayAvgCorners;
+        data["h2HHomeAvgFreeKicks"] = this.h2HHomeAvgFreeKicks;
+        data["h2HAwayAvgFreeKicks"] = this.h2HAwayAvgFreeKicks;
+        data["h2HHomeAvgRedCards"] = this.h2HHomeAvgRedCards;
+        data["h2HAwayAvgRedCards"] = this.h2HAwayAvgRedCards;
+        data["homeScore"] = this.homeScore;
+        data["awayScore"] = this.awayScore;
+        data["weight"] = this.weight;
         data["matchResult"] = this.matchResult;
         return data;
     }
@@ -2236,11 +2463,33 @@ export interface IMatchData {
     awayPossessionAvg?: number;
     homeShotsAvg?: number;
     awayShotsAvg?: number;
+    homeAvgXG?: number;
+    awayAvgXG?: number;
+    homeAvgXGA?: number;
+    awayAvgXGA?: number;
     homeWinRate?: number;
     awayWinRate?: number;
     h2HHomeWins?: number;
     h2HAwayWins?: number;
     h2HDraws?: number;
+    h2HHomeWinRate?: number;
+    h2HAwayWinRate?: number;
+    h2HDrawRate?: number;
+    h2HHomeAvgXG?: number;
+    h2HHomeAvgXGA?: number;
+    h2HAwayAvgXG?: number;
+    h2HAwayAvgXGA?: number;
+    h2HHomeAvgBigChances?: number;
+    h2HAwayAvgBigChances?: number;
+    h2HHomeAvgCorners?: number;
+    h2HAwayAvgCorners?: number;
+    h2HHomeAvgFreeKicks?: number;
+    h2HAwayAvgFreeKicks?: number;
+    h2HHomeAvgRedCards?: number;
+    h2HAwayAvgRedCards?: number;
+    homeScore?: number;
+    awayScore?: number;
+    weight?: number;
     matchResult?: number;
 }
 
@@ -2290,6 +2539,46 @@ export class MatchPrediction implements IMatchPrediction {
 export interface IMatchPrediction {
     predictedResult?: number;
     score?: number[] | undefined;
+}
+
+export class MatchScorePrediction implements IMatchScorePrediction {
+    homeScore?: number;
+    awayScore?: number;
+
+    constructor(data?: IMatchScorePrediction) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.homeScore = _data["homeScore"];
+            this.awayScore = _data["awayScore"];
+        }
+    }
+
+    static fromJS(data: any): MatchScorePrediction {
+        data = typeof data === 'object' ? data : {};
+        let result = new MatchScorePrediction();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["homeScore"] = this.homeScore;
+        data["awayScore"] = this.awayScore;
+        return data;
+    }
+}
+
+export interface IMatchScorePrediction {
+    homeScore?: number;
+    awayScore?: number;
 }
 
 export class Odds implements IOdds {
@@ -2470,6 +2759,86 @@ export interface IOption {
     link?: string | undefined;
     trend?: number;
     oldRate?: OldRate;
+}
+
+export class PredictionAccuracy implements IPredictionAccuracy {
+    totalPredictions?: number;
+    correctPredictions?: number;
+    homeWinPredictions?: number;
+    homeWinCorrect?: number;
+    drawPredictions?: number;
+    drawCorrect?: number;
+    awayWinPredictions?: number;
+    awayWinCorrect?: number;
+    readonly overallAccuracy?: number;
+    readonly homeWinAccuracy?: number;
+    readonly drawAccuracy?: number;
+    readonly awayWinAccuracy?: number;
+
+    constructor(data?: IPredictionAccuracy) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalPredictions = _data["totalPredictions"];
+            this.correctPredictions = _data["correctPredictions"];
+            this.homeWinPredictions = _data["homeWinPredictions"];
+            this.homeWinCorrect = _data["homeWinCorrect"];
+            this.drawPredictions = _data["drawPredictions"];
+            this.drawCorrect = _data["drawCorrect"];
+            this.awayWinPredictions = _data["awayWinPredictions"];
+            this.awayWinCorrect = _data["awayWinCorrect"];
+            (<any>this).overallAccuracy = _data["overallAccuracy"];
+            (<any>this).homeWinAccuracy = _data["homeWinAccuracy"];
+            (<any>this).drawAccuracy = _data["drawAccuracy"];
+            (<any>this).awayWinAccuracy = _data["awayWinAccuracy"];
+        }
+    }
+
+    static fromJS(data: any): PredictionAccuracy {
+        data = typeof data === 'object' ? data : {};
+        let result = new PredictionAccuracy();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalPredictions"] = this.totalPredictions;
+        data["correctPredictions"] = this.correctPredictions;
+        data["homeWinPredictions"] = this.homeWinPredictions;
+        data["homeWinCorrect"] = this.homeWinCorrect;
+        data["drawPredictions"] = this.drawPredictions;
+        data["drawCorrect"] = this.drawCorrect;
+        data["awayWinPredictions"] = this.awayWinPredictions;
+        data["awayWinCorrect"] = this.awayWinCorrect;
+        data["overallAccuracy"] = this.overallAccuracy;
+        data["homeWinAccuracy"] = this.homeWinAccuracy;
+        data["drawAccuracy"] = this.drawAccuracy;
+        data["awayWinAccuracy"] = this.awayWinAccuracy;
+        return data;
+    }
+}
+
+export interface IPredictionAccuracy {
+    totalPredictions?: number;
+    correctPredictions?: number;
+    homeWinPredictions?: number;
+    homeWinCorrect?: number;
+    drawPredictions?: number;
+    drawCorrect?: number;
+    awayWinPredictions?: number;
+    awayWinCorrect?: number;
+    overallAccuracy?: number;
+    homeWinAccuracy?: number;
+    drawAccuracy?: number;
+    awayWinAccuracy?: number;
 }
 
 export class PrematchRate implements IPrematchRate {

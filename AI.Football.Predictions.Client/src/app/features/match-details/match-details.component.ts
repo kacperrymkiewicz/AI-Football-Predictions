@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { MatchPrediction, SportradarHead2HeadResponse, SportradarMatchDetailsResponse, SportradarMatchStatisticsResponse } from '../../core/api-client/api-client';
+import { MatchPrediction, MatchScorePrediction, SportradarHead2HeadResponse, SportradarMatchDetailsResponse, SportradarMatchStatisticsResponse } from '../../core/api-client/api-client';
 import { MatchService } from '../../core/services/match.service';
 import { LoadingStateService } from '../../core/services/loading-state.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -31,6 +31,7 @@ export class MatchDetailsComponent implements OnInit {
   matchStatistics!: SportradarMatchStatisticsResponse;
   matchesH2h!: SportradarHead2HeadResponse;
   matchPrediction!: MatchPrediction;
+  matchScorePrediction!: MatchScorePrediction;
 
   activeTab: string = "h2h";
 
@@ -40,6 +41,7 @@ export class MatchDetailsComponent implements OnInit {
       this.fetchMatchStatistics();
       this.fetchH2hMatches();
       this.fetchMatchPrediction();
+      this.fetchMatchScorePrediction();
     });
   }
 
@@ -107,6 +109,23 @@ export class MatchDetailsComponent implements OnInit {
       },
       complete: () => {
         this.loadingStateService.setState("matchPrediction", false);
+      },
+    });
+  }
+
+  fetchMatchScorePrediction() {
+    const matchId = Number(this.route.snapshot.paramMap.get("id"));
+    this.loadingStateService.setState("matchScorePrediction", true);
+
+    this.matchService.getMatchScorePredictionById(matchId).subscribe({
+      next: (response) => {
+        this.matchScorePrediction = response;
+      },
+      error: () => {
+        this.loadingStateService.setState("matchScorePrediction", false, true);
+      },
+      complete: () => {
+        this.loadingStateService.setState("matchScorePrediction", false);
       },
     });
   }

@@ -120,7 +120,7 @@ namespace AI.Football.Predictions.API.Controllers
         public async Task<ActionResult<MatchScorePrediction>> PredictScoreById(int id)
         {
             var matchPredictionData = await _matchService.GetMatchPredictionDataById(id);
-            var scorePrediction = _predictionService.PredictScore(matchPredictionData);
+            var scorePrediction = _predictionService.PredictScoreWithConsistency(matchPredictionData);
             return Ok(scorePrediction);
         }
 

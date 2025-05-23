@@ -225,6 +225,27 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="match-prediction mt-3">
+              <h3>Przewidywany wynik</h3>
+              @if (loadingStateService.isLoading('matchScorePrediction')) {
+                <div class="loading-spinner">
+                  <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <h3>Trwa obliczanie wyniku...</h3>
+                </div>
+              } @else {
+                <div class="match-prediction__probability justify-content-center">
+                  <div class="match-prediction__home mx-2">{{ matchScorePrediction.homeScore }}</div>
+                  :
+                  <div class="match-prediction__away mx-2">{{ matchScorePrediction.awayScore }}</div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
