@@ -39,11 +39,22 @@ namespace AI.Football.Predictions.API.Services
                 MatchData predictionData = MatchDataMapper.FromHistoricalMatch(match);
             
                 var prediction = _matchPredictionService.Predict(predictionData);
+                var scorePrediction = _matchPredictionService.PredictScoreWithConsistency(predictionData);
                 predictionAccuracy.TotalPredictions++;
 
                 if((Result)prediction.PredictedResult == match.Result)
                 {
                     predictionAccuracy.CorrectPredictions++;
+                }
+
+                if (scorePrediction.HomeScore == match.HomeCompetitor.Score && scorePrediction.AwayScore == match.AwayCompetitor.Score)
+                {
+                    predictionAccuracy.ScoreCorrectPredictions++;    
+                }
+
+                if (Math.Abs(scorePrediction.HomeScore - match.HomeCompetitor.Score) <= 1 && Math.Abs(scorePrediction.AwayScore - match.AwayCompetitor.Score) <= 1)
+                {
+                    predictionAccuracy.ScoreClosePredictions++;
                 }
 
                 switch ((Result)prediction.PredictedResult)
