@@ -226,7 +226,6 @@
     background-color: #1d1d1d;
     border-radius: 16px;
 
-
     .match-statistics__header {
       padding: 16px;
 
@@ -236,9 +235,35 @@
       }
     }
 
-    .match-statistics__content {
-      padding: 0 16px;
-      padding-bottom: 10px;
+    .match-statistics__item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      border-bottom: 1px solid #333;
+
+      .match-statistics__home {
+        background-color: #e40020;
+        padding: 2px 15px;
+        border-radius: 15px;
+        font-weight: 600;
+      }
+
+      .match-statistics__away {
+        background-color: #0d7646;
+        padding: 2px 15px;
+        border-radius: 15px;
+        font-weight: 600;
+      }
+
+      .match-statistics__category {
+        font-weight: 500;
+      }
+    }
+
+    .match-statistics__item:last-child {
+      border-bottom: none;
+      margin-bottom: 1rem;
     }
   }
 

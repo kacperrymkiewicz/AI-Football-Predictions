@@ -178,6 +178,24 @@ export class MatchDetailsComponent implements OnInit {
     ).length ?? 0;
   }
 
+  get mergedStats(): { name?: string, homeValue: any, awayValue: any }[] {
+    const categories = new Set([
+      ...this.homeStats.map(s => s.name),
+      ...this.awayStats.map(s => s.name),
+    ].filter((name): name is string => !!name));
+
+    return Array.from(categories).map(name => {
+      const home = this.homeStats.find(s => s.name === name);
+      const away = this.awayStats.find(s => s.name === name);
+      return {
+        name,
+        homeValue: home?.value ?? '-',
+        awayValue: away?.value ?? '-'
+      };
+    });
+  }
+
+
   formatAsPercent(value: number): string {
     const percent = value * 100;
     return percent.toFixed(2) + '%';
